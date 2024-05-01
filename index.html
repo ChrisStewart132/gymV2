@@ -1,0 +1,76 @@
+<!-- gymV2 app
+
+
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymV2</title>
+    <style>
+        * {
+            border: 0px solid rgb(16, 16, 16);
+            color: white;  
+            text-align: center;
+            margin: 0px;
+            vertical-align: middle;
+        }
+        body {
+            background-color: black;
+            overflow: auto; 
+        }
+        .container {
+            border: 1px solid rgb(16, 16, 16);
+            margin-bottom: 150px;
+        }
+        h1{padding: 3px;}
+        .exercise {
+            padding: 10px;
+            background-color: rgb(22, 22, 22);
+            display: inline-block;
+            margin-bottom: 10px;
+            border-radius: 12px;
+        }
+        p, span{ 
+            padding: 2px;
+            font-size: medium;
+        }
+        #details > p {
+            text-align: left;
+        }
+        img {
+            width: auto;
+            height: 360px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- template exercise block to be duplicated -->
+        <div class="exercise" onclick="check(this)">
+            <h1 id="name">NAME</h1>
+            <img src="data/scraped/90-degree crunch on bench.webp"><br>
+            <div id="details">
+                <p id="Target muscle">Target muscle: ...</p>
+                <p id="Synergists">Synergists: ...</p>
+                <p id="Mechanics">Mechanics: ...</p>
+                <p id="Force">Force: ...</p>
+            </div>
+            <div id="tags">
+                <span>tag0</span>
+                <span>tag1</span>
+                <span>tag...</span>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function load_exercises(){
+            // TODO
+        }
+    </script>
+</body>
+</html>
