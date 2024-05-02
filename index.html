@@ -13,6 +13,7 @@
         * {
             border: 0px solid rgb(16, 16, 16);
             color: white;  
+            background-color: black;
             text-align: center;
             margin: 0px;
             vertical-align: middle;
@@ -33,6 +34,9 @@
             margin: 10px;
             border-radius: 12px;
             max-width: 540px;
+        }
+        .hidden{
+            display: none;
         }
         p, span{ 
             padding: 2px;
@@ -55,26 +59,40 @@
             color:black;
             background-color: white;
         }
+        input:hover{
+            background-color: white;
+            color: black;
+        }
     </style>
 </head>
 <body>
+    <navbar>
+        <a herf="index.html">HOME</a>
+        <a herf="user.html">USER</a>
+    </navbar>
     <div>
         <label for="equipment">equipment:</label>
         <select name="equipment" id="equipment">
-            <option value="null"></option>
+            <option value="empty"></option>
         </select> 
 
         <label for="TargetMuscleFilter">target muscle:</label>
         <select name="TargetMuscleFilter" id="TargetMuscleFilter">
-            <option value="null"></option>
+            <option value="empty"></option>
+        </select> 
+
+        <label for="SynergistMuscleFilter">synergist muscle:</label>
+        <select name="SynergistMuscleFilter" id="SynergistMuscleFilter">
+            <option value="empty"></option>
         </select> 
 
         <label for="ForceSelection">force:</label>
         <select name="ForceSelection" id="ForceSelection">
-            <option value="null"></option>
+            <option value="empty"></option>
         </select> 
+        <input type="submit" value="APPLY" onclick="applyFilter()">
     </div>
-    
+
     <div class="container">
         <!-- template exercise block to be duplicated -->
         <div class="exercise" onclick="check(this)">
@@ -97,7 +115,57 @@
 
     <script>
         const CONTAINER = document.querySelector(`.container`);
+        load_filters();
         load_exercises();
+
+
+        async function load_filters(){
+            load_equipment_filter()
+            load_target_muscle_filter()
+            load_synergist_muscle_filter()
+            load_forces_filter()
+        }
+        async function load_forces_filter(){
+            const obj = await fetch(`data/forces.json`).then(r=>r.json());
+            const target_muscles_select = document.getElementById(`ForceSelection`)
+            obj["forces"].forEach((e)=>{
+                const option = document.createElement(`option`)
+                option.textContent = e;
+                option.value = e;
+                target_muscles_select.appendChild(option);
+            })
+        }
+        async function load_equipment_filter(){
+            const obj = await fetch(`data/equipment_tags.json`).then(r=>r.json());
+            const target_muscles_select = document.getElementById(`equipment`)
+            obj["equipment"].forEach((e)=>{
+                const option = document.createElement(`option`)
+                option.textContent = e;
+                option.value = e;
+                target_muscles_select.appendChild(option);
+            })
+        }
+        async function load_synergist_muscle_filter(){
+            const obj = await fetch(`data/synergists.json`).then(r=>r.json());
+            const target_muscles_select = document.getElementById(`SynergistMuscleFilter`)
+            obj["synergists"].forEach((e)=>{
+                const option = document.createElement(`option`)
+                option.textContent = e;
+                option.value = e;
+                target_muscles_select.appendChild(option);
+            })
+        }
+        async function load_target_muscle_filter(){
+            const target_muscles_obj = await fetch(`data/target_muscles.json`).then(r=>r.json());
+            const target_muscles_select = document.getElementById(`TargetMuscleFilter`)
+            target_muscles_obj["target muscles"].forEach((e)=>{
+                const option = document.createElement(`option`)
+                option.textContent = e;
+                option.value = e;
+                target_muscles_select.appendChild(option);
+            })
+        }
+
 
         async function load_exercises(){
             names_obj = await fetch("/data/names.json").then(response => response.json());
@@ -107,15 +175,14 @@
                     load_exercise(name);
                 }     
             });
-            // remove the template exercise when complete
-            CONTAINER.removeChild(CONTAINER.children[0]);
+            // remove/hide the template exercise when complete
+            //CONTAINER.removeChild(CONTAINER.children[0]);
+            CONTAINER.children[0].classList.add(`hidden`)
         }
-
         async function load_exercise(name){
             const exercise_element = await create_exercise_element(name);
             CONTAINER.appendChild(exercise_element);
         }
-
         async function create_exercise_element(name){
             const template = CONTAINER.querySelector(`.exercise`);
             let exercise_element = template.cloneNode(true);
@@ -140,9 +207,56 @@
                 element.textContent = tag;
                 tags.appendChild(element);
             }))
-
             return exercise_element;
         }
+
+        async function applyFilter(){
+            await resetFilter();
+            await applyEquipmentFilter();
+            await applyForceFilter();
+            //const target_filter = document.getElementById("TargetMuscleFilter")
+            //const synergist_filter = document.getElementById("SynergistMuscleFilter")
+            //const force_filter = document.getElementById("ForceSelection")            
+        }
+
+        async function resetFilter(){
+            Array.from(CONTAINER.children).forEach(e => e.classList.remove(`hidden`))
+        }
+
+        async function applyEquipmentFilter(){
+            const filter = document.getElementById("equipment")
+            console.log(filter.value)
+            if(filter.value != 'empty'){
+                Array.from(CONTAINER.children).forEach((e,i)=>{
+                    if(e.classList.contains(`hidden`)){
+                        return;   
+                    }
+                    const tags = e.querySelector(`#tags`)
+                    const arr = Array.from(tags.children, e => e.textContent)
+                    if(!arr.includes(filter.value)){
+                        e.classList.add(`hidden`)
+                    }
+                })
+            }
+        }
+
+        async function applyForceFilter(){
+            const filter = document.getElementById("ForceSelection")
+            console.log(filter.value)
+            if(filter.value != 'empty'){
+                Array.from(CONTAINER.children).forEach((e,i)=>{
+                    if(e.classList.contains(`hidden`)){
+                        return;   
+                    }
+                    const str = e.querySelector(`#Force`).textContent
+                    if(!str.includes(filter.value)){
+                        e.classList.add(`hidden`)
+                    }
+                })
+            }
+        }
+
+
     </script>
 </body>
 </html>
