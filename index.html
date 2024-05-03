@@ -170,7 +170,7 @@
         async function load_exercises(){
             names_obj = await fetch("/data/names.json").then(response => response.json());
             names_obj.names.forEach((name, index, arr) => {
-                if(index < 33 || false){
+                if(index < 33 || true){
                     console.log(name);
                     load_exercise(name);
                 }     
@@ -214,15 +214,12 @@
             await resetFilter();
             await applyEquipmentFilter();
             await applyForceFilter();
-            //const target_filter = document.getElementById("TargetMuscleFilter")
-            //const synergist_filter = document.getElementById("SynergistMuscleFilter")
-            //const force_filter = document.getElementById("ForceSelection")            
+            await applyTargetFilter();
+            await applySynergistFilter();     
         }
-
         async function resetFilter(){
             Array.from(CONTAINER.children).forEach(e => e.classList.remove(`hidden`))
         }
-
         async function applyEquipmentFilter(){
             const filter = document.getElementById("equipment")
             console.log(filter.value)
@@ -239,7 +236,6 @@
                 })
             }
         }
-
         async function applyForceFilter(){
             const filter = document.getElementById("ForceSelection")
             console.log(filter.value)
@@ -255,7 +251,36 @@
                 })
             }
         }
-
+        async function applyTargetFilter(){
+            const filter = document.getElementById("TargetMuscleFilter")
+            console.log(filter.value)
+            if(filter.value != 'empty'){
+                Array.from(CONTAINER.children).forEach((e,i)=>{
+                    if(e.classList.contains(`hidden`)){
+                        return;   
+                    }
+                    const str = e.querySelector(`#TargetMuscle`).textContent
+                    if(!str.includes(filter.value)){
+                        e.classList.add(`hidden`)
+                    }
+                })
+            }
+        }
+        async function applySynergistFilter(){
+            const filter = document.getElementById("SynergistMuscleFilter")
+            console.log(filter.value)
+            if(filter.value != 'empty'){
+                Array.from(CONTAINER.children).forEach((e,i)=>{
+                    if(e.classList.contains(`hidden`)){
+                        return;   
+                    }
+                    const str = e.querySelector(`#Synergists`).textContent
+                    if(!str.includes(filter.value)){
+                        e.classList.add(`hidden`)
+                    }
+                })
+            }
+        }
 
     </script>
 </body>
