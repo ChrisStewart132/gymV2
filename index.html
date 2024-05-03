@@ -1,7 +1,20 @@
 <!-- gymV2 app
+    gym exercise app using data scraped from the weight training guide website
+    
+HOME
+    exercises are loaded from local files,
+    exercises can be filtered by equipment, target muscle, synergist muscles, and force (push vs pull)
+USER (TODO)
+    exercises can be saved (with a visual cue i.e css color scheme) to local storage and viewed on a user page (TODO)
+    exercises can have multiple notes saved (to local sotrage) and attached to their block (TODO)
+    exercises can include sets,reps completed (TODO)
 
-
-
+long range possibilities:
+    save exercises with meta data and date worked with sets reps...
+        graph page to visualize muscle groups worked etc
+    improve scraped data quality (filtering)
+    improve filtering
+    add exercises
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -26,6 +39,7 @@
             border: 1px solid rgb(16, 16, 16);
             margin-bottom: 150px;
         }
+
         h1{padding: 3px;}
         .exercise {
             padding: 10px;
@@ -34,6 +48,9 @@
             margin: 10px;
             border-radius: 12px;
             max-width: 540px;
+        }
+        .saved {
+            background-color: darkgreen;
         }
         .hidden{
             display: none;
@@ -95,7 +112,7 @@
 
     <div class="container">
         <!-- template exercise block to be duplicated -->
-        <div class="exercise" onclick="check(this)">
+        <div class="exercise" onclick="selectExercise(this)">
             <h1 id="name">NAME</h1>
             <img src="data/scraped/90-degree crunch on bench.webp"><br>
             <div id="details">
@@ -117,6 +134,25 @@
         const CONTAINER = document.querySelector(`.container`);
         load_filters();
         load_exercises();
+
+        function selectExercise(exercise_element){
+            if(exercise_element.classList.contains(`saved`)){
+                exercise_element.classList.remove(`saved`)
+                unsaveExercise(exercise_element)
+            } else {
+                exercise_element.classList.add(`saved`)
+                saveExercise(exercise_element)
+            }
+        }
+        function saveExercise(exercise_element){
+            const key = exercise_element.querySelector(`#name`).textContent
+            const value = "1"
+            localStorage.setItem(key, value)
+        }
+        function unsaveExercsie(exercise_element){
+            const key = exercise_element.querySelector(`#name`).textContent
+            localStorage.removeItem(key)
+        }
 
 
         async function load_filters(){
@@ -171,7 +207,7 @@
             names_obj = await fetch("/data/names.json").then(response => response.json());
             names_obj.names.forEach((name, index, arr) => {
                 if(index < 33 || true){
-                    console.log(name);
+                    //console.log(name);
                     load_exercise(name);
                 }     
             });
@@ -181,6 +217,10 @@
         }
         async function load_exercise(name){
             const exercise_element = await create_exercise_element(name);
+            const key = exercise_element.querySelector(`#name`).textContent
+            if(localStorage.getItem(key) === "1"){
+                exercise_element.classList.add(`saved`)
+            }
             CONTAINER.appendChild(exercise_element);
         }
         async function create_exercise_element(name){
@@ -222,7 +262,7 @@
         }
         async function applyEquipmentFilter(){
             const filter = document.getElementById("equipment")
-            console.log(filter.value)
+            //.log(filter.value)
             if(filter.value != 'empty'){
                 Array.from(CONTAINER.children).forEach((e,i)=>{
                     if(e.classList.contains(`hidden`)){
@@ -238,7 +278,7 @@
         }
         async function applyForceFilter(){
             const filter = document.getElementById("ForceSelection")
-            console.log(filter.value)
+            //console.log(filter.value)
             if(filter.value != 'empty'){
                 Array.from(CONTAINER.children).forEach((e,i)=>{
                     if(e.classList.contains(`hidden`)){
@@ -253,7 +293,7 @@
         }
         async function applyTargetFilter(){
             const filter = document.getElementById("TargetMuscleFilter")
-            console.log(filter.value)
+            //console.log(filter.value)
             if(filter.value != 'empty'){
                 Array.from(CONTAINER.children).forEach((e,i)=>{
                     if(e.classList.contains(`hidden`)){
@@ -268,7 +308,7 @@
         }
         async function applySynergistFilter(){
             const filter = document.getElementById("SynergistMuscleFilter")
-            console.log(filter.value)
+            //console.log(filter.value)
             if(filter.value != 'empty'){
                 Array.from(CONTAINER.children).forEach((e,i)=>{
                     if(e.classList.contains(`hidden`)){
