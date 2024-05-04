@@ -8,6 +8,7 @@ USER
     exercises can be saved (with a visual cue i.e css color scheme) to local storage and viewed on a user page
     exercises can have multiple notes saved (to local sotrage) and attached to their block (TODO)
     exercises can include sets,reps completed (TODO)
+    user mode filtering 
 
 long range possibilities:
     save exercises with meta data and date worked with sets reps...
@@ -104,7 +105,7 @@ long range possibilities:
             <option value="empty"></option>
         </select> 
         <input type="submit" value="APPLY FILTER" onclick="applyFilter()">
-        <input TYPE="submit" onclick="userMode()" value="USER MODE">
+        <input TYPE="submit" id="userMode" onclick="userMode(this)" value="USER MODE">
         <input TYPE="submit" onclick="reset()" value="RESET">
     </div>
 
@@ -133,7 +134,14 @@ long range possibilities:
         load_filters();
         load_exercises();
 
-        function userMode(){
+        function userMode(element){
+            if(element.classList.contains(`saved`)){
+                element.classList.remove(`saved`)
+                applyFilter()
+                return;
+            }
+
+            element.classList.add(`saved`)
             for(const exercise of CONTAINER.children){
                 const key = exercise.querySelector(`#name`).textContent
                 if(localStorage.getItem(key) !== "1"){
@@ -142,6 +150,7 @@ long range possibilities:
                     exercise.classList.remove(`hidden`)
                 }
             }
+            applyFilter()
         }
 
         function reset(){
@@ -168,7 +177,7 @@ long range possibilities:
             const value = "1"
             localStorage.setItem(key, value)
         }
-        function unsaveExercsie(exercise_element){
+        function unsaveExercise(exercise_element){
             const key = exercise_element.querySelector(`#name`).textContent
             localStorage.removeItem(key)
         }
@@ -236,7 +245,7 @@ long range possibilities:
         }
         async function load_exercise(name){
             const exercise_element = await create_exercise_element(name);
-            const key = exercise_element.querySelector(`#name`).textContent
+            const key = name
             if(localStorage.getItem(key) === "1"){
                 exercise_element.classList.add(`saved`)
             }
@@ -270,7 +279,16 @@ long range possibilities:
         }
 
         async function applyFilter(){
-            await resetFilter();
+            const userModeElement = document.getElementById(`userMode`)
+            if(!userModeElement.classList.contains(`saved`)){// not in user mode
+                await resetFilter();
+            }else{// user mode
+                Array.from(CONTAINER.children).forEach(e => {
+                    const key = e.querySelector(`#name`).textContent
+                    if(localStorage.getItem(key) === "1")
+                        e.classList.remove(`hidden`)
+                })
+            }
             await applyEquipmentFilter();
             await applyForceFilter();
             await applyTargetFilter();
