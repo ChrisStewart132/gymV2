@@ -16,6 +16,8 @@ long range possibilities:
     improve scraped data quality (filtering)
     improve filtering
     add exercises
+    pagination depending on performance
+    phone/mobile device css styling
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -113,7 +115,7 @@ long range possibilities:
         <!-- template exercise block to be duplicated -->
         <div class="exercise" onclick="selectExercise(this)">
             <h1 id="name">NAME</h1>
-            <img src="data/scraped/90-degree crunch on bench.webp"><br>
+            <img src="data/exercises/90-degree crunch on bench.webp"><br>
             <div id="details">
                 <p id="TargetMuscle">Target muscle: </p>
                 <p id="Synergists">Synergists: </p>
@@ -256,9 +258,9 @@ long range possibilities:
             let exercise_element = template.cloneNode(true);
             exercise_element.querySelector('#name').textContent = name; 
 
-            const metadata = await fetch(`data/scraped/${name}.json`).then(r => r.json());
+            const metadata = await fetch(`data/exercises/${name}.json`).then(r => r.json());
             //console.log(metadata)
-            exercise_element.querySelector('img').src = `data/scraped/${name}.webp`
+            exercise_element.querySelector('img').src = `data/exercises/${name}.webp`
 
             exercise_element.querySelector('#TargetMuscle').textContent += metadata[`Target muscle`]
             exercise_element.querySelector('#Synergists').textContent += metadata[`Synergists`]
