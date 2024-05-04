@@ -115,7 +115,7 @@ long range possibilities:
         <!-- template exercise block to be duplicated -->
         <div class="exercise" onclick="selectExercise(this)">
             <h1 id="name">NAME</h1>
-            <img src="data/exercises/90-degree crunch on bench.webp"><br>
+            <img src="gymV2/data/exercises/90-degree crunch on bench.webp"><br>
             <div id="details">
                 <p id="TargetMuscle">Target muscle: </p>
                 <p id="Synergists">Synergists: </p>
@@ -192,7 +192,7 @@ long range possibilities:
             load_forces_filter()
         }
         async function load_forces_filter(){
-            const obj = await fetch(`data/forces.json`).then(r=>r.json());
+            const obj = await fetch(`gymV2/data/forces.json`).then(r=>r.json());
             const target_muscles_select = document.getElementById(`ForceSelection`)
             obj["forces"].forEach((e)=>{
                 const option = document.createElement(`option`)
@@ -202,7 +202,7 @@ long range possibilities:
             })
         }
         async function load_equipment_filter(){
-            const obj = await fetch(`data/equipment_tags.json`).then(r=>r.json());
+            const obj = await fetch(`gymV2/data/equipment_tags.json`).then(r=>r.json());
             const target_muscles_select = document.getElementById(`equipment`)
             obj["equipment"].forEach((e)=>{
                 const option = document.createElement(`option`)
@@ -212,7 +212,7 @@ long range possibilities:
             })
         }
         async function load_synergist_muscle_filter(){
-            const obj = await fetch(`data/synergists.json`).then(r=>r.json());
+            const obj = await fetch(`gymV2/data/synergists.json`).then(r=>r.json());
             const target_muscles_select = document.getElementById(`SynergistMuscleFilter`)
             obj["synergists"].forEach((e)=>{
                 const option = document.createElement(`option`)
@@ -222,7 +222,7 @@ long range possibilities:
             })
         }
         async function load_target_muscle_filter(){
-            const target_muscles_obj = await fetch(`data/target_muscles.json`).then(r=>r.json());
+            const target_muscles_obj = await fetch(`gymV2/data/target_muscles.json`).then(r=>r.json());
             const target_muscles_select = document.getElementById(`TargetMuscleFilter`)
             target_muscles_obj["target muscles"].forEach((e)=>{
                 const option = document.createElement(`option`)
@@ -234,7 +234,7 @@ long range possibilities:
 
 
         async function load_exercises(){
-            names_obj = await fetch("/data/names.json").then(response => response.json());
+            names_obj = await fetch("gymV2/data/names.json").then(response => response.json());
             names_obj.names.forEach((name, index, arr) => {
                 if(index < 33 || true){
                     //console.log(name);
@@ -258,9 +258,9 @@ long range possibilities:
             let exercise_element = template.cloneNode(true);
             exercise_element.querySelector('#name').textContent = name; 
 
-            const metadata = await fetch(`data/exercises/${name}.json`).then(r => r.json());
+            const metadata = await fetch(`gymV2/data/exercises/${name}.json`).then(r => r.json());
             //console.log(metadata)
-            exercise_element.querySelector('img').src = `data/exercises/${name}.webp`
+            exercise_element.querySelector('img').src = `gymV2/data/exercises/${name}.webp`
 
             exercise_element.querySelector('#TargetMuscle').textContent += metadata[`Target muscle`]
             exercise_element.querySelector('#Synergists').textContent += metadata[`Synergists`]
