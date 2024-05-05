@@ -133,8 +133,6 @@ long range possibilities:
             </div>
             <div id="tags" class="hidden">
                 <span>tag0</span>
-                <span>tag1</span>
-                <span>tag...</span>
             </div>
             <br>
             <div>
@@ -168,18 +166,23 @@ long range possibilities:
             text_element.value = ""
             note.classList.remove(`hidden`)
             notes_element.appendChild(note)
-            saveNote(exercise_element, note)
+            _saveNote(exercise_element, note)
         }
-        function saveNote(exercise_element, note_element){
+        function _load_exercise_notes_obj(exercise_element){
             const key = exercise_element.querySelector(`#name`).textContent + "_notes"
             let obj = {"notes":[]}
             if(localStorage.getItem(key) !== null){
                 obj = JSON.parse(localStorage.getItem(key))
             }
+            return obj
+        }
+        function _saveNote(exercise_element, note_element){
+            const obj = _load_exercise_notes_obj(exercise_element)
             obj.notes.push(note_element.textContent)
+            const key = exercise_element.querySelector(`#name`).textContent + "_notes"
             localStorage.setItem(key, JSON.stringify(obj))
         }
-        function unsaveNote(exercise_element, note_element){
+        function _unsaveNote(exercise_element, note_element){
             // TODO
         }
 
@@ -222,6 +225,10 @@ long range possibilities:
             for(const exercise of CONTAINER.children){
                 exercise.classList.remove(`saved`)
                 exercise.classList.remove(`hidden`)
+                const notes_element = exercise.querySelector(`#notes`)
+                for(let i = notes_element.childElementCount-1; i > 0; i--){
+                    notes_element.removeChild(notes_element.children[i])
+                }
             }
         }
 
@@ -231,18 +238,18 @@ long range possibilities:
                 return
             if(exercise_element.classList.contains(`saved`)){
                 exercise_element.classList.remove(`saved`)
-                unsaveExercise(exercise_element)
+                _unsaveExercise(exercise_element)
             } else {
                 exercise_element.classList.add(`saved`)
-                saveExercise(exercise_element)
+                _saveExercise(exercise_element)
             }
         }
-        function saveExercise(exercise_element){
+        function _saveExercise(exercise_element){
             const key = exercise_element.querySelector(`#name`).textContent
             const value = "1"
             localStorage.setItem(key, value)
         }
-        function unsaveExercise(exercise_element){
+        function _unsaveExercise(exercise_element){
             const key = exercise_element.querySelector(`#name`).textContent
             localStorage.removeItem(key)
         }
@@ -299,34 +306,32 @@ long range possibilities:
         async function load_exercises(){
             names_obj = await fetch("gymV2/data/names.json").then(response => response.json());
             names_obj.names.forEach((name, index, arr) => {
-                load_exercise(name);
+                _load_exercise(name);
             });
             // remove/hide the template exercise when complete
             //CONTAINER.removeChild(CONTAINER.children[0]);
             CONTAINER.children[0].classList.add(`hidden`)
         }
-        async function load_exercise(name){
-            const exercise_element = await create_exercise_element(name);
+        async function _load_exercise(name){
+            const exercise_element = await _create_exercise_element(name);
             const key = name
             if(localStorage.getItem(key) === "1"){
                 exercise_element.classList.add(`saved`)
             }
-            const notes_key = exercise_element.querySelector(`#name`).textContent + "_notes"
-            if(localStorage.getItem(notes_key) !== null){
-                obj = JSON.parse(localStorage.getItem(notes_key))
-                const notes_element = exercise_element.querySelector(`#notes`)
-                const template = notes_element.children[0]
-                for(const note_str of obj.notes){
-                    const note_element = template.cloneNode(true)
-                    note_element.textContent = note_str
-                    note_element.classList.remove(`hidden`)
-                    notes_element.appendChild(note_element)
-                }
+
+            const notes_obj = _load_exercise_notes_obj(exercise_element)
+            const notes_element = exercise_element.querySelector(`#notes`)
+            const template = notes_element.children[0]
+            for(const note_str of notes_obj.notes){
+                const note_element = template.cloneNode(true)
+                note_element.textContent = note_str
+                note_element.classList.remove(`hidden`)
+                notes_element.appendChild(note_element)
             }
 
             CONTAINER.appendChild(exercise_element);
         }
-        async function create_exercise_element(name){
+        async function _create_exercise_element(name){
             const template = CONTAINER.querySelector(`.exercise`);
             let exercise_element = template.cloneNode(true);
             exercise_element.querySelector('#name').textContent = name; 
@@ -356,7 +361,7 @@ long range possibilities:
         async function applyFilter(){
             const userModeElement = document.getElementById(`userMode`)
             if(!userModeElement.classList.contains(`saved`)){// not in user mode
-                await resetFilter();
+                await _resetFilter();
             }else{// user mode
                 Array.from(CONTAINER.children).forEach(e => {
                     const key = e.querySelector(`#name`).textContent
@@ -364,17 +369,16 @@ long range possibilities:
                         e.classList.remove(`hidden`)
                 })
             }
-            await applyEquipmentFilter();
-            await applyForceFilter();
-            await applyTargetFilter();
-            await applySynergistFilter();     
+            await _applyEquipmentFilter();
+            await _applyForceFilter();
+            await _applyTargetFilter();
+            await _applySynergistFilter();     
         }
-        async function resetFilter(){
+        async function _resetFilter(){
             Array.from(CONTAINER.children).forEach(e => e.classList.remove(`hidden`))
         }
-        async function applyEquipmentFilter(){
+        async function _applyEquipmentFilter(){
             const filter = document.getElementById("equipment")
-            //.log(filter.value)
             if(filter.value != 'empty'){
                 Array.from(CONTAINER.children).forEach((e,i)=>{
                     if(e.classList.contains(`hidden`)){
@@ -388,9 +392,8 @@ long range possibilities:
                 })
             }
         }
-        async function applyForceFilter(){
+        async function _applyForceFilter(){
             const filter = document.getElementById("ForceSelection")
-            //console.log(filter.value)
             if(filter.value != 'empty'){
                 Array.from(CONTAINER.children).forEach((e,i)=>{
                     if(e.classList.contains(`hidden`)){
@@ -403,9 +406,8 @@ long range possibilities:
                 })
             }
         }
-        async function applyTargetFilter(){
+        async function _applyTargetFilter(){
             const filter = document.getElementById("TargetMuscleFilter")
-            //console.log(filter.value)
             if(filter.value != 'empty'){
                 Array.from(CONTAINER.children).forEach((e,i)=>{
                     if(e.classList.contains(`hidden`)){
@@ -418,9 +420,8 @@ long range possibilities:
                 })
             }
         }
-        async function applySynergistFilter(){
+        async function _applySynergistFilter(){
             const filter = document.getElementById("SynergistMuscleFilter")
-            //console.log(filter.value)
             if(filter.value != 'empty'){
                 Array.from(CONTAINER.children).forEach((e,i)=>{
                     if(e.classList.contains(`hidden`)){
