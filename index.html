@@ -6,7 +6,7 @@ HOME
     exercises can be filtered by equipment, target muscle, synergist muscles, and force (push vs pull)
 USER 
     exercises can be saved (with a visual cue i.e css color scheme) to local storage and viewed on a user page
-    exercises can have multiple notes saved (to local sotrage) and attached to their block (TODO)
+    exercises can have multiple notes saved (to local sotrage) and attached to their block 
     exercises include sets completed 
     user mode filtering 
 
@@ -139,14 +139,14 @@ long range possibilities:
             <br>
             <div>
                 sets
-                <input id="setsCompleted" type="number" value="0" min="0">
+                <input id="setsCompleted" type="number" value="0" min="0" style="width:40px;">
                 <input class="btn" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)">
                 <input class="btn" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
-                <input type="text" value="...">
-                <input class="btn" type="submit" value="add" onclick="addNote(this)">
+                <input type="text" value="" id="noteInput">
+                <input class="btn" type="submit" value="add note" onclick="addNote(this)">
             </div>
             <div id="notes">
-                notes TODO
+                <p class="hidden">example note</p>
             </div>
         </div>
     </div>
@@ -156,6 +156,32 @@ long range possibilities:
         const CONTAINER = document.querySelector(`.container`);
         load_filters();
         load_exercises();
+
+        function addNote(btn_element){
+            const text_element = btn_element.parentElement.querySelector(`#noteInput`)
+            const exercise_element = btn_element.parentElement.parentElement
+            const notes_element = exercise_element.querySelector(`#notes`)
+            const template = notes_element.children[0]
+
+            const note = template.cloneNode(true)
+            note.textContent = text_element.value
+            text_element.value = ""
+            note.classList.remove(`hidden`)
+            notes_element.appendChild(note)
+            saveNote(exercise_element, note)
+        }
+        function saveNote(exercise_element, note_element){
+            const key = exercise_element.querySelector(`#name`).textContent + "_notes"
+            let obj = {"notes":[]}
+            if(localStorage.getItem(key) !== null){
+                obj = JSON.parse(localStorage.getItem(key))
+            }
+            obj.notes.push(note_element.textContent)
+            localStorage.setItem(key, JSON.stringify(obj))
+        }
+        function unsaveNote(exercise_element, note_element){
+            // TODO
+        }
 
         function incrementExerciseSetsCompleted(element){
             const parent_element = element.parentElement
@@ -273,10 +299,7 @@ long range possibilities:
         async function load_exercises(){
             names_obj = await fetch("gymV2/data/names.json").then(response => response.json());
             names_obj.names.forEach((name, index, arr) => {
-                if(index < 33 || true){
-                    //console.log(name);
-                    load_exercise(name);
-                }     
+                load_exercise(name);
             });
             // remove/hide the template exercise when complete
             //CONTAINER.removeChild(CONTAINER.children[0]);
@@ -288,6 +311,19 @@ long range possibilities:
             if(localStorage.getItem(key) === "1"){
                 exercise_element.classList.add(`saved`)
             }
+            const notes_key = exercise_element.querySelector(`#name`).textContent + "_notes"
+            if(localStorage.getItem(notes_key) !== null){
+                obj = JSON.parse(localStorage.getItem(notes_key))
+                const notes_element = exercise_element.querySelector(`#notes`)
+                const template = notes_element.children[0]
+                for(const note_str of obj.notes){
+                    const note_element = template.cloneNode(true)
+                    note_element.textContent = note_str
+                    note_element.classList.remove(`hidden`)
+                    notes_element.appendChild(note_element)
+                }
+            }
+
             CONTAINER.appendChild(exercise_element);
         }
         async function create_exercise_element(name){
