@@ -7,7 +7,7 @@ HOME
 USER 
     exercises can be saved (with a visual cue i.e css color scheme) to local storage and viewed on a user page
     exercises can have multiple notes saved (to local sotrage) and attached to their block (TODO)
-    exercises can include sets,reps completed (TODO)
+    exercises include sets completed 
     user mode filtering 
 
 long range possibilities:
@@ -52,6 +52,9 @@ long range possibilities:
             border-radius: 12px;
             max-width: 540px;
         }
+        .exercise:hover{
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
         .saved {
             background-color: darkgreen;
         }
@@ -83,6 +86,12 @@ long range possibilities:
             background-color: white;
             color: black;
         }
+        .btn{
+            padding: 4px;
+            margin: 4px;
+            border: 1px solid white;
+            min-width: 40px;
+        }
     </style>
 </head>
 <body>
@@ -113,19 +122,31 @@ long range possibilities:
 
     <div class="container">
         <!-- template exercise block to be duplicated -->
-        <div class="exercise" onclick="selectExercise(this)">
+        <div class="exercise" onclick="selectExercise(this, event)">
             <h1 id="name">NAME</h1>
             <img src="gymV2/data/exercises/90-degree crunch on bench.webp"><br>
             <div id="details">
-                <p id="TargetMuscle">Target muscle: </p>
-                <p id="Synergists">Synergists: </p>
-                <p id="Mechanics">Mechanics: </p>
-                <p id="Force">Force: </p>
+                <p id="TargetMuscle" class="hidden">Target muscle: </p>
+                <p id="Synergists" class="hidden">Synergists: </p>
+                <p id="Mechanics" class="hidden">Mechanics: </p>
+                <p id="Force" class="hidden">Force: </p>
             </div>
-            <div id="tags">
+            <div id="tags" class="hidden">
                 <span>tag0</span>
                 <span>tag1</span>
                 <span>tag...</span>
+            </div>
+            <br>
+            <div>
+                sets
+                <input id="setsCompleted" type="number" value="0" min="0">
+                <input class="btn" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)">
+                <input class="btn" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
+                <input type="text" value="...">
+                <input class="btn" type="submit" value="add" onclick="addNote(this)">
+            </div>
+            <div id="notes">
+                notes TODO
             </div>
         </div>
     </div>
@@ -135,6 +156,19 @@ long range possibilities:
         const CONTAINER = document.querySelector(`.container`);
         load_filters();
         load_exercises();
+
+        function incrementExerciseSetsCompleted(element){
+            const parent_element = element.parentElement
+            const sets_completed_element = parent_element.querySelector(`#setsCompleted`)
+            sets_completed_element.value = parseInt(sets_completed_element.value)+1
+        }
+        function decrementExerciseSetsCompleted(element){
+            const parent_element = element.parentElement
+            const sets_completed_element = parent_element.querySelector(`#setsCompleted`)
+            const n = parseInt(sets_completed_element.value)
+            if(n > 0)
+                sets_completed_element.value = n-1
+        }
 
         function userMode(element){
             if(element.classList.contains(`saved`)){
@@ -165,7 +199,10 @@ long range possibilities:
             }
         }
 
-        function selectExercise(exercise_element){
+        function selectExercise(exercise_element, event){
+            //console.log(event.target)
+            if(event.target.type === "submit" || event.target.type === "text")
+                return
             if(exercise_element.classList.contains(`saved`)){
                 exercise_element.classList.remove(`saved`)
                 unsaveExercise(exercise_element)
