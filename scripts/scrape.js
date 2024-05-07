@@ -2,9 +2,9 @@
     script to gather exercise images and metadata from weight training guide.
 */
 
-const SLEEP_TIME = 1000;// ms to sleep before requests
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+const SLEEP_TIME = 100;// ms to sleep before requests
+async function sleep(ms) {
+    return await new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function get(url) {
