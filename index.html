@@ -11,6 +11,7 @@ USER
     exercises can have multiple notes saved (to local sotrage) and attached to their block 
     user mode filtering 
     ability to save/load a user.json for use between devices
+    LOCK USER MODE preventing save/unsave (TODO)
 
 long range possibilities:
     save exercises with meta data and date worked with sets reps...
@@ -38,7 +39,7 @@ long range possibilities:
             margin: 0px;
             vertical-align: middle;
             font-family: Lucida Console;
-            font-size: large;
+            font-size: xx-large;
         }
         body {
             background-color: black;
@@ -51,7 +52,7 @@ long range possibilities:
 
         h1{padding: 3px;}
         .exercise {
-            padding: 10px;
+            padding: 20px;
             background-color: rgb(22, 22, 22);
             display: inline-block;
             margin: 10px;
@@ -84,30 +85,33 @@ long range possibilities:
             width: auto;
             height: 360px;
         }
-        select{
+        select:hover{
             color:black;
             background-color: white;
         }
         select{
-            width: 100px;
             background-color: rgb(33, 33, 33);
             color: white;
+        }
+        input, select, .btn{
+            min-height: 50px;
+            min-width: 100px;
+            margin-right: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
         input:hover{
             background-color: white;
             color: black;
         }
         .btn{
-            padding: 4px;
-            margin: 4px;
+            padding: 20px;
             border: 1px solid white;
-            min-width: 40px;
         }
-        
     </style>
 </head>
 <body>
-    <div>
+    <navbar>
         <label for="equipment">equipment:</label>
         <select name="equipment" id="equipment">
             <option value="empty"></option>
@@ -132,7 +136,7 @@ long range possibilities:
         <input class="btn" type="file" id="fileInput" accept=".json">
         <input class="btn" type="submit" onclick="save_user()" value="SAVE USER">
         <input class="btn" type="submit" onclick="reset()" value="RESET USER">
-    </div>
+    </navbar>
 
     <div class="container">
         <!-- template exercise block to be duplicated -->
@@ -154,12 +158,12 @@ long range possibilities:
                 <input id="setsCompleted" type="number" value="0" min="0" style="width:40px;">
                 <input class="btn" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
                 <div style="text-align: right;">
-                    <input style="width:75%" type="text" value="" id="noteInput">
+                    <input style="width:100%; height:80px" type="text" value="" id="noteInput">
                     <input class="btn" type="submit" value="ADD NOTE" onclick="addNote(this)">
                 </div>
             </div>
             <div id="notes">
-                <p class="hidden">example note</p>
+                <p class="hidden" style="font-size: xx-large;">example note</p>
             </div>
         </div>
     </div>
