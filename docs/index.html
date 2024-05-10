@@ -8,14 +8,14 @@ HOME
     number of exercises loaded/visible (TODO)
     name/title filter (TODO)
     css adaptive sizing/layout (mobile) (TODO)
-    reset sets btn(TODO)
 USER 
     exercises can be saved (with a visual cue i.e css color scheme) to local storage and viewed on a user page
     exercises can have multiple notes saved (to local sotrage) and attached to their block 
     user mode filtering 
     ability to save/load a user.json for use between devices
     LOCK USER MODE preventing save/unsave 
-    custom categorization of exercises + filter (e.g. monday, wed, fri enum) (TODO)
+    hiding/revealing of user input fields while locked/unlocked
+    custom categorization of exercises + filter (e.g. monday, wed, fri enum) (TODO WIP)
 
 long range possibilities:
     save exercises with meta data and date worked with sets reps...
@@ -74,7 +74,7 @@ long range possibilities:
         }
         p, span{ 
             padding: 2px;
-            font-size: medium;
+            font-size: x-large;
         }
         .tag {
             border: 1px solid gray;
@@ -114,6 +114,7 @@ long range possibilities:
             padding: 20px;
             border: 1px solid white;
         }
+        .user{}
     </style>
 </head>
 <body>
@@ -161,12 +162,13 @@ long range possibilities:
             </div>
             <br>
             <div>
+                <span class="user hidden">category</span><input class="user hidden" id="exerciseCategory" type="number" value="0" min="0" style="width:40px;"><br>
                 <input class="btn" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)">
                 <input id="setsCompleted" type="number" value="0" min="0" style="width:40px;">
                 <input class="btn" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
                 <div style="text-align: right;">
-                    <input style="width:94%; height:80px; margin-left: 3%;" type="text" value="" id="noteInput">
-                    <input class="btn" type="submit" value="ADD NOTE" onclick="addNote(this)">
+                    <input style="width:94%; height:80px; margin-left: 3%; background-color: rgb(33, 33, 33);" type="text" value="" id="noteInput" class="user hidden">
+                    <input class="btn user hidden" type="submit" value="ADD NOTE" onclick="addNote(this)" >
                 </div>
             </div>
             <div id="notes">
@@ -190,6 +192,15 @@ long range possibilities:
             }else{
                 btn_element.value = "LOCK"
                 USER_LOCKED = false
+            }
+            const user_elements = document.querySelectorAll(`.user`)
+            for(const e of user_elements){
+                if(USER_LOCKED){
+                    e.classList.add(`hidden`)
+                }else{
+                    e.classList.remove(`hidden`)
+                }
+                    
             }
         }
         function save_user(){
