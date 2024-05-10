@@ -6,12 +6,16 @@ HOME
     exercises can be filtered by equipment, target muscle, synergist muscles, and force (push vs pull)
     exercises include sets completed 
     number of exercises loaded/visible (TODO)
+    name/title filter (TODO)
+    css adaptive sizing/layout (mobile) (TODO)
+    reset sets btn(TODO)
 USER 
     exercises can be saved (with a visual cue i.e css color scheme) to local storage and viewed on a user page
     exercises can have multiple notes saved (to local sotrage) and attached to their block 
     user mode filtering 
     ability to save/load a user.json for use between devices
-    LOCK USER MODE preventing save/unsave (TODO)
+    LOCK USER MODE preventing save/unsave 
+    custom categorization of exercises + filter (e.g. monday, wed, fri enum) (TODO)
 
 long range possibilities:
     save exercises with meta data and date worked with sets reps...
@@ -93,6 +97,7 @@ long range possibilities:
         select{
             background-color: rgb(33, 33, 33);
             color: white;
+            width: 200px;
         }
         input, select, .btn{
             min-height: 50px;
@@ -137,6 +142,7 @@ long range possibilities:
         <input class="btn" type="file" id="fileInput" accept=".json">
         <input class="btn" type="submit" onclick="save_user()" value="SAVE USER">
         <input class="btn" type="submit" onclick="reset()" value="RESET USER">
+        <input class="btn" type="submit" onclick="lock_user(this)" value="UNLOCK" id="userLock">
     </navbar>
 
     <div class="container">
@@ -173,9 +179,19 @@ long range possibilities:
     <script>
         const CONTAINER = document.querySelector(`.container`);
         const FILE_INPUT = document.getElementById('fileInput');
+        var USER_LOCKED = document.getElementById('userLock').value === "UNLOCK";
         load_filters();
         load_exercises();
 
+        function lock_user(btn_element){
+            if(btn_element.value === "LOCK"){
+                btn_element.value = "UNLOCK"
+                USER_LOCKED = true
+            }else{
+                btn_element.value = "LOCK"
+                USER_LOCKED = false
+            }
+        }
         function save_user(){
             const user_obj = {}
             for (let i = 0; i < localStorage.length; i++) {
@@ -301,7 +317,7 @@ long range possibilities:
         }
 
         function selectExercise(exercise_element, event){
-            if(event.target.type === "submit" || event.target.type === "text")
+            if(event.target.type === "submit" || event.target.type === "text" || USER_LOCKED)
                 return
             if(exercise_element.classList.contains(`saved`)){
                 exercise_element.classList.remove(`saved`)
@@ -312,11 +328,15 @@ long range possibilities:
             }
         }
         function _saveExercise(exercise_element){
+            if(USER_LOCKED)
+                return
             const key = exercise_element.querySelector(`#name`).textContent
             const value = "1"
             localStorage.setItem(key, value)
         }
         function _unsaveExercise(exercise_element){
+            if(USER_LOCKED)
+                return
             const key = exercise_element.querySelector(`#name`).textContent
             localStorage.removeItem(key)
         }
