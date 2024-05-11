@@ -5,7 +5,6 @@ HOME
     exercises are loaded from local files,
     exercises can be filtered by equipment, target muscle, synergist muscles, and force (push vs pull)
     exercises include sets completed 
-    number of exercises loaded/visible (TODO)
     name/title filter (TODO)
     css adaptive sizing/layout (mobile) (TODO)
 USER 
@@ -15,7 +14,7 @@ USER
     ability to save/load a user.json for use between devices
     LOCK USER MODE preventing save/unsave 
     hiding/revealing of user input fields while locked/unlocked
-    custom categorization of exercises + filter (e.g. monday, wed, fri enum) (TODO WIP)
+    custom categorization of exercises + filter 
 
 long range possibilities:
     save exercises with meta data and date worked with sets reps...
@@ -122,6 +121,11 @@ long range possibilities:
         navbar {
             font-size: 0;/* to remove inline block whitespace */
         }
+        .fixed{
+            position: fixed;
+            bottom: 5%;
+            right: 5%;
+        }
     </style>
 </head>
 <body>
@@ -145,12 +149,24 @@ long range possibilities:
         <select name="ForceSelection" id="ForceSelection">
             <option value="empty"></option>
         </select> 
+        <label for="categorySelection">category:</label>
+        <select name="categorySelection" id="categorySelection">
+            <option value=""></option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+        </select> 
         <input class="btn" type="submit" value="APPLY FILTER" onclick="applyFilter()">
+        <br>
         <input class="btn" type="submit" id="userMode" onclick="userMode(this)" value="USER MODE">
         <input class="btn" type="file" id="fileInput" accept=".json">
         <input class="btn" type="submit" onclick="save_user()" value="SAVE USER">
         <input class="btn" type="submit" onclick="reset()" value="RESET USER">
-        <input class="btn" type="submit" onclick="lock_user(this)" value="UNLOCK" id="userLock">
+        <input class="btn fixed" type="submit" onclick="lock_user(this)" value="UNLOCK" id="userLock">
     </navbar>
 
     <div class="container">
@@ -169,7 +185,8 @@ long range possibilities:
             </div>
             <br>
             <div>
-                <span class="user hidden">category</span><input class="user hidden" id="exerciseCategory" type="number" value="0" min="0" style="width:40px;"><br>
+                <span class="user hidden">category</span><input class="user hidden" onchange="_saveExerciseCategory(this)" id="exerciseCategory" type="number" value="1" min="1" max="7" style="width:40px;">
+                <br class="user hidden">
                 <input class="btn" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)">
                 <input id="setsCompleted" type="number" value="0" min="0" style="width:40px;">
                 <input class="btn" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
@@ -288,6 +305,15 @@ long range possibilities:
             // TODO
         }
 
+        function _saveExerciseCategory(exercise_category_element){
+            const exercise_element = exercise_category_element.parentElement.parentElement
+            const category = exercise_category_element.value
+            if(USER_LOCKED || category === "1")
+                return
+            const key = exercise_element.querySelector(`#name`).textContent + "_category"
+            localStorage.setItem(key, category)
+        }
+
         function incrementExerciseSetsCompleted(element){
             const parent_element = element.parentElement
             const sets_completed_element = parent_element.querySelector(`#setsCompleted`)
@@ -335,7 +361,7 @@ long range possibilities:
         }
 
         function selectExercise(exercise_element, event){
-            if(event.target.type === "submit" || event.target.type === "text" || USER_LOCKED)
+            if(event.target.type === "submit" || event.target.type === "text" || USER_LOCKED || event.target.type === "number")
                 return
             if(exercise_element.classList.contains(`saved`)){
                 exercise_element.classList.remove(`saved`)
@@ -420,6 +446,14 @@ long range possibilities:
                 exercise_element.classList.add(`saved`)
             }
 
+            const category_key = key + "_category"
+            let category = localStorage.getItem(category_key)
+            if(category === null)
+                category = 1
+            category = parseInt(category)
+            exercise_element.querySelector(`#exerciseCategory`).value = category
+
+
             const notes_obj = _load_exercise_notes_obj(exercise_element)
             const notes_element = exercise_element.querySelector(`#notes`)
             const template = notes_element.children[0]
@@ -473,7 +507,8 @@ long range possibilities:
             await _applyEquipmentFilter();
             await _applyForceFilter();
             await _applyTargetFilter();
-            await _applySynergistFilter();     
+            await _applySynergistFilter();    
+            await _applyCategoryFilter();   
         }
         async function _resetFilter(){
             Array.from(CONTAINER.children).forEach(e => e.classList.remove(`hidden`))
@@ -535,7 +570,20 @@ long range possibilities:
                 })
             }
         }
-
+        async function _applyCategoryFilter(){
+            const filter = document.getElementById("categorySelection")
+            if(!filter.value)
+                return
+            Array.from(CONTAINER.children).forEach((e,i)=>{
+                if(e.classList.contains(`hidden`)){
+                    return;   
+                }
+                const str = e.querySelector(`#exerciseCategory`).value
+                if(str !== filter.value){
+                    e.classList.add(`hidden`)
+                }
+            })
+        }
     </script>
 </body>
 </html>
