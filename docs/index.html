@@ -64,7 +64,6 @@ long range possibilities:
             margin: 1px;
             border-radius: 0px;
             width: 300px;
-            min-height: 315px;
         }
         .exercise:hover{
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
@@ -86,7 +85,7 @@ long range possibilities:
             font-size: small;
             min-width: 100%;
             padding: 0;
-            height: 30px;
+            height: 15px;
         }
         .exerciseNote{
             display: inline-block;
@@ -107,11 +106,11 @@ long range possibilities:
             height: 50px;
         }
         .minimized {
-            min-height: 30px;
-            max-height: 30px;
+            min-height: 15px;
+            max-height: 15px;
         }
         .saved {
-
+            box-shadow: 0 0 20px rgba(255, 255, 255, 1);
         }
         .hidden{
             display: none;
@@ -206,14 +205,15 @@ long range possibilities:
     <div class="container">
         <!-- template exercise block to be duplicated -->
         <div class="exercise" onclick="selectExercise(this, event)">
-            <img src="assets/data/exercises/90-degree crunch on bench.webp">
             <h1 id="name">NAME</h1>
+            <img src="assets/data/exercises/90-degree crunch on bench.webp">
+            
             <div class="exerciseMain" id="exerciseMain">
                 
-                <input class="btn" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)"><!--
-                --><input id="setsCompleted" type="number" value="0" min="0"
+                <input class="btn hidden" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)"><!--
+                --><input class="hidden" id="setsCompleted" type="number" value="0" min="0"
                  style="width:40px; margin:0px;"><!--
-                --><input class="btn" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
+                --><input class="btn hidden" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
                 <div id="notes">
                     <p class="exerciseNote hidden" style="font-size: large;">example note</p>
                 </div>
