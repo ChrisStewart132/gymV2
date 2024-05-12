@@ -206,13 +206,18 @@ long range possibilities:
 
 
     <script>
+        // div element containing all the exercise divs
         const CONTAINER = document.querySelector(`.container`);
+        // file input element used to load *.json files containing user data
         const FILE_INPUT = document.getElementById('fileInput');
+        // user locked flag
         var USER_LOCKED = document.getElementById('userLock').value === "UNLOCK";
+
         load_filters();
         load_exercises();
 
         function lock_user(btn_element){
+            /* toggles the USER_LOCKED flag, locking various btns from being clicked */
             if(btn_element.value === "LOCK"){
                 btn_element.value = "UNLOCK"
                 USER_LOCKED = true
@@ -231,6 +236,7 @@ long range possibilities:
             }
         }
         function save_user(){
+            /* saves the entire local storage to user.json */
             const user_obj = {}
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i); // Get the key at index i
@@ -258,7 +264,7 @@ long range possibilities:
             URL.revokeObjectURL(url);
         }
 
-        // Add an event listener to handle file selection
+        // Add an event listener to handle user.json file loading
         fileInput.addEventListener('change', function(event) {
             const file = event.target.files[0]; // Get the selected file
             if (!file) return; // If no file selected, exit
@@ -278,6 +284,7 @@ long range possibilities:
         });
 
         function addNote(btn_element){
+            /* creates/duplicates from the hidden template note in the exercise element */
             const text_element = btn_element.parentElement.querySelector(`#noteInput`)
             const exercise_element = btn_element.parentElement.parentElement.parentElement
             const notes_element = exercise_element.querySelector(`#notes`)
@@ -350,6 +357,7 @@ long range possibilities:
         }
 
         function reset(){
+            /* clears user settings, clears localStorage and defaults all exercises */
             if(!confirm("Are you sure?"))
                 return;
             localStorage.clear()
@@ -364,6 +372,8 @@ long range possibilities:
         }
 
         function selectExercise(exercise_element, event){
+            /* implements logic when an exercise element is clicked (onClick) */
+
             // if child input elements selected dont select the exercise
             if(event.target.type === "submit" || event.target.type === "text" || event.target.type === "number")
                 return
@@ -409,6 +419,7 @@ long range possibilities:
 
 
         async function load_filters(){
+            /* loads the various select>options from .json files for filtering */
             load_equipment_filter()
             load_target_muscle_filter()
             load_synergist_muscle_filter()
@@ -455,6 +466,8 @@ long range possibilities:
 
 
         async function load_exercises(){
+            /* loads names.json containing the filenames of all .json and img files to be loaded,
+             creates all exercise elements and appends them to CONTAINER */
             names_obj = await fetch("assets/data/names.json").then(response => response.json());
             names_obj.names.forEach((name, index, arr) => {
                 _load_exercise(name);
