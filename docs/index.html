@@ -45,7 +45,7 @@ long range possibilities:
             margin: 0px;
             vertical-align: middle;
             font-family: Lucida Console;
-            font-size: xx-large;
+            font-size: large;
         }
         body {
             background-color: black;
@@ -58,15 +58,19 @@ long range possibilities:
 
         h1{padding: 3px;}
         .exercise {
-            padding: 20px;
+            padding: 10px;
             background-color: rgb(22, 22, 22);
             display: inline-block;
             margin: 10px;
-            border-radius: 12px;
-            max-width: 540px;
+            border-radius: 10px;
+            max-width: 300px;
         }
         .exercise:hover{
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        .exercise > img {
+            height: auto;
+            max-width: 300px;
         }
         .saved {
             background-color: rgba(255, 255, 255, 1);
@@ -77,7 +81,7 @@ long range possibilities:
         }
         p, span{ 
             padding: 2px;
-            font-size: x-large;
+            font-size: large;
         }
         .tag {
             border: 1px solid gray;
@@ -88,11 +92,7 @@ long range possibilities:
         #details > p {
             text-align: left;
         }
-        img {
-            width: auto;
-            height: 360px;
-            max-width: 540px;
-        }
+        
         select:hover{
             color:black;
             background-color: white;
@@ -103,8 +103,6 @@ long range possibilities:
             width: 200px;
         }
         input, select, .btn{
-            min-height: 50px;
-            min-width: 100px;
             margin-right: 20px;
             margin-top: 10px;
             margin-bottom: 10px;
@@ -113,9 +111,13 @@ long range possibilities:
             background-color: white;
             color: black;
         }
-        .btn{
-            padding: 20px;
+        .btn{  
+            padding: auto;
             border: 1px solid white;
+        }
+        .exercise > .btn{
+            width: 50px;
+            height: 50px;
         }
         .user{}
         label {
@@ -199,7 +201,7 @@ long range possibilities:
                 </div>
             </div>
             <div id="notes">
-                <p class="hidden" style="font-size: xx-large;">example note</p>
+                <p class="hidden" style="font-size: large;">example note</p>
             </div>
         </div>
     </div>
