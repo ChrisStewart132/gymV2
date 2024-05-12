@@ -188,7 +188,7 @@ long range possibilities:
             </div>
             <br>
             <div id="exerciseMain">
-                <span class="user hidden">category</span><input class="user hidden" onchange="_saveExerciseCategory(this)" id="exerciseCategory" type="number" value="1" min="1" max="7" style="width:40px;">
+                <span class="user hidden">category</span><input class="user hidden" onchange="_save_exercise_obj(this.parentElement.parentElement)" id="exerciseCategory" type="number" value="1" min="1" max="7" style="width:40px;">
                 <br class="user hidden">
                 <input class="btn" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)">
                 <input id="setsCompleted" type="number" value="0" min="0" style="width:40px;">
@@ -295,33 +295,55 @@ long range possibilities:
             text_element.value = ""
             note.classList.remove(`hidden`)
             notes_element.appendChild(note)
-            _saveNote(exercise_element, note)
+            _save_exercise_obj(exercise_element)
         }
-        function _load_exercise_notes_obj(exercise_element){
-            const key = exercise_element.querySelector(`#name`).textContent + "_notes"
-            let obj = {"notes":[]}
-            if(localStorage.getItem(key) !== null){
+        function _get_exercise_key(exercise_element){
+            return exercise_element.querySelector(`#name`).textContent
+        }
+        function _get_exercise_notes(exercise_element){
+            const notes_container = exercise_element.querySelector(`#notes`)
+            let exercise_notes = []
+            for(const note_element of notes_container.children){
+                exercise_notes.push(note_element.textContent)
+            }
+            return exercise_notes
+        }
+        function _get_exercise_category(exercise_element){
+            return parseInt(exercise_element.querySelector(`#exerciseCategory`).value)
+        }
+        function _load_exercise_obj(exercise_element){
+            /*
+                loads from localStorage an exercise obj
+                exercise name maps to...
+                    {
+                        "name":"",
+                        "notes":["",""],
+                        "category":1
+                    }
+            */
+            const key = _get_exercise_key(exercise_element)
+            let obj = {"name":key, "notes":[], "category":1}
+            if(localStorage.getItem(key) !== null){// load from localStorage
                 obj = JSON.parse(localStorage.getItem(key))
             }
             return obj
         }
-        function _saveNote(exercise_element, note_element){
-            const obj = _load_exercise_notes_obj(exercise_element)
-            obj.notes.push(note_element.textContent)
-            const key = exercise_element.querySelector(`#name`).textContent + "_notes"
-            localStorage.setItem(key, JSON.stringify(obj))
-        }
-        function _unsaveNote(exercise_element, note_element){
-            // TODO
-        }
-
-        function _saveExerciseCategory(exercise_category_element){
-            const exercise_element = exercise_category_element.parentElement.parentElement
-            const category = exercise_category_element.value
-            if(USER_LOCKED || category === "1")
-                return
-            const key = exercise_element.querySelector(`#name`).textContent + "_category"
-            localStorage.setItem(key, category)
+        function _save_exercise_obj(exercise_element){
+            /*
+                saves to localStorage an exercise obj
+                exercise name maps to...
+                    {
+                        "name":"",
+                        "notes":["",""],
+                        "category":1
+                    }
+            */
+            const key = _get_exercise_key(exercise_element)
+            const notes = _get_exercise_notes(exercise_element)
+            const category = _get_exercise_category(exercise_element)
+            let obj = {"name": key, "notes": notes, "category": category}
+            console.log(`saving: ${JSON.stringify(obj)}`)
+            localStorage.setItem(obj.name, JSON.stringify(obj))
         }
 
         function incrementExerciseSetsCompleted(element){
@@ -337,20 +359,22 @@ long range possibilities:
                 sets_completed_element.value = n-1
         }
 
-        function userMode(element){
-            if(element.classList.contains(`saved`)){
-                element.classList.remove(`saved`)
+        function userMode(btn_element){
+            // userMode off
+            if(btn_element.classList.contains(`saved`)){
+                btn_element.classList.remove(`saved`)
                 applyFilter()
                 return;
             }
 
-            element.classList.add(`saved`)
-            for(const exercise of CONTAINER.children){
-                const key = exercise.querySelector(`#name`).textContent
-                if(localStorage.getItem(key) !== "1"){
-                    exercise.classList.add(`hidden`)
+            // userMode on
+            btn_element.classList.add(`saved`)
+            for(const exercise_element of CONTAINER.children){
+                const key = _get_exercise_key(exercise_element)
+                if(localStorage.getItem(key) === null){
+                    exercise_element.classList.add(`hidden`)
                 }else{
-                    exercise.classList.remove(`hidden`)
+                    exercise_element.classList.remove(`hidden`)
                 }
             }
             applyFilter()
@@ -361,14 +385,7 @@ long range possibilities:
             if(!confirm("Are you sure?"))
                 return;
             localStorage.clear()
-            for(const exercise of CONTAINER.children){
-                exercise.classList.remove(`saved`)
-                exercise.classList.remove(`hidden`)
-                const notes_element = exercise.querySelector(`#notes`)
-                for(let i = notes_element.childElementCount-1; i > 0; i--){
-                    notes_element.removeChild(notes_element.children[i])
-                }
-            }
+            location.reload()
         }
 
         function selectExercise(exercise_element, event){
@@ -385,7 +402,7 @@ long range possibilities:
                 _unsaveExercise(exercise_element)
             } else {
                 exercise_element.classList.add(`saved`)
-                _saveExercise(exercise_element)
+                _save_exercise_obj(exercise_element)
             }
         }
         function _toggleMinimizeExercise(exercise_element){
@@ -403,17 +420,9 @@ long range possibilities:
                 exercise_notes_element.classList.remove(`hidden`)
             }
         }
-        function _saveExercise(exercise_element){
-            if(USER_LOCKED)
-                return
-            const key = exercise_element.querySelector(`#name`).textContent
-            const value = "1"
-            localStorage.setItem(key, value)
-        }
+
         function _unsaveExercise(exercise_element){
-            if(USER_LOCKED)
-                return
-            const key = exercise_element.querySelector(`#name`).textContent
+            const key = _get_exercise_key(exercise_element)
             localStorage.removeItem(key)
         }
 
@@ -477,22 +486,16 @@ long range possibilities:
         async function _load_exercise(name){
             const exercise_element = await _create_exercise_element(name);
             const key = name
-            if(localStorage.getItem(key) === "1"){
+            if(localStorage.getItem(key) !== null){
                 exercise_element.classList.add(`saved`)
             }
 
-            const category_key = key + "_category"
-            let category = localStorage.getItem(category_key)
-            if(category === null)
-                category = 1
-            category = parseInt(category)
-            exercise_element.querySelector(`#exerciseCategory`).value = category
+            const obj = _load_exercise_obj(exercise_element)
+            exercise_element.querySelector(`#exerciseCategory`).value = obj.category
 
-
-            const notes_obj = _load_exercise_notes_obj(exercise_element)
             const notes_element = exercise_element.querySelector(`#notes`)
             const template = notes_element.children[0]
-            for(const note_str of notes_obj.notes){
+            for(const note_str of obj.notes){
                 const note_element = template.cloneNode(true)
                 note_element.textContent = note_str
                 note_element.classList.remove(`hidden`)
@@ -535,7 +538,7 @@ long range possibilities:
             }else{// user mode
                 Array.from(CONTAINER.children).forEach(e => {
                     const key = e.querySelector(`#name`).textContent
-                    if(localStorage.getItem(key) === "1")
+                    if(localStorage.getItem(key) !== null)
                         e.classList.remove(`hidden`)
                 })
             }
@@ -613,7 +616,7 @@ long range possibilities:
                 if(e.classList.contains(`hidden`)){
                     return;   
                 }
-                const str = e.querySelector(`#exerciseCategory`).value
+                const str = _get_exercise_category(e).toString()
                 if(str !== filter.value){
                     e.classList.add(`hidden`)
                 }
