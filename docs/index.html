@@ -58,19 +58,28 @@ long range possibilities:
 
         h1{padding: 3px;}
         .exercise {
-            padding: 10px;
-            background-color: rgb(22, 22, 22);
             display: inline-block;
-            margin: 10px;
-            border-radius: 10px;
-            max-width: 300px;
+            background-color: rgb(22, 22, 22);
+            padding: 0px;
+            vertical-align: text-top;
+            margin: 1px;
+            border-radius: 0px;
+            width: 300px;
         }
         .exercise:hover{
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
         .exercise > img {
             height: auto;
-            max-width: 300px;
+            width: 100%;
+        }
+        .exercise > h1 {
+            color: black;
+            background-color: white;
+            font-size: small;
+            min-width: 100%;
+            padding: 0;
+            height: 30px;
         }
         .saved {
             background-color: rgba(255, 255, 255, 1);
@@ -177,8 +186,8 @@ long range possibilities:
     <div class="container">
         <!-- template exercise block to be duplicated -->
         <div class="exercise" onclick="selectExercise(this, event)">
+            <img src="assets/data/exercises/90-degree crunch on bench.webp">
             <h1 id="name">NAME</h1>
-            <img src="assets/data/exercises/90-degree crunch on bench.webp"><br>
             <div id="details">
                 <p id="TargetMuscle" class="hidden">Target muscle: </p>
                 <p id="Synergists" class="hidden">Synergists: </p>
@@ -188,7 +197,6 @@ long range possibilities:
             <div id="tags" class="hidden">
                 <span>tag0</span>
             </div>
-            <br>
             <div id="exerciseMain">
                 <span class="user hidden">category</span><input class="user hidden" onchange="_save_exercise_obj(this.parentElement.parentElement)" id="exerciseCategory" type="number" value="1" min="1" max="7" style="width:40px;">
                 <br class="user hidden">
