@@ -306,7 +306,7 @@ long range possibilities:
             for(const note_element of notes_container.children){
                 exercise_notes.push(note_element.textContent)
             }
-            return exercise_notes
+            return exercise_notes.slice(1)
         }
         function _get_exercise_category(exercise_element){
             return parseInt(exercise_element.querySelector(`#exerciseCategory`).value)
@@ -501,7 +501,6 @@ long range possibilities:
                 note_element.classList.remove(`hidden`)
                 notes_element.appendChild(note_element)
             }
-
             CONTAINER.appendChild(exercise_element);
         }
         async function _create_exercise_element(name){
