@@ -55,16 +55,16 @@ long range possibilities:
             border: 1px solid rgb(16, 16, 16);
             margin-bottom: 150px;
         }
-
         h1{padding: 3px;}
         .exercise {
             display: inline-block;
-            background-color: rgb(22, 22, 22);
+            background-color: black;
             padding: 0px;
             vertical-align: text-top;
             margin: 1px;
             border-radius: 0px;
             width: 300px;
+            min-height: 315px;
         }
         .exercise:hover{
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
@@ -72,6 +72,13 @@ long range possibilities:
         .exercise > img {
             height: auto;
             width: 100%;
+        }
+        .exerciseMain{
+        }
+        .exerciseMain > .btn{
+            padding: 10px;
+            margin: 5px;
+            border: 0px;
         }
         .exercise > h1 {
             color: black;
@@ -81,9 +88,30 @@ long range possibilities:
             padding: 0;
             height: 30px;
         }
+        .exerciseNote{
+            display: inline-block;
+            padding: 5px;
+            margin: 1px;
+            margin-right: 5px;
+            text-align: left;
+        }
+        .exerciseMain > #notes{
+
+        }
+        .btn{  
+            padding: auto;
+            border: 1px solid white;
+        }
+        .exercise > .btn{
+            width: 50px;
+            height: 50px;
+        }
+        .minimized {
+            min-height: 30px;
+            max-height: 30px;
+        }
         .saved {
-            background-color: rgba(255, 255, 255, 1);
-            color: rgb(33, 33, 33);
+
         }
         .hidden{
             display: none;
@@ -119,15 +147,7 @@ long range possibilities:
         input:hover{
             background-color: white;
             color: black;
-        }
-        .btn{  
-            padding: auto;
-            border: 1px solid white;
-        }
-        .exercise > .btn{
-            width: 50px;
-            height: 50px;
-        }
+        }      
         .user{}
         label {
             user-select: none; /* Prevent text selection */
@@ -188,6 +208,28 @@ long range possibilities:
         <div class="exercise" onclick="selectExercise(this, event)">
             <img src="assets/data/exercises/90-degree crunch on bench.webp">
             <h1 id="name">NAME</h1>
+            <div class="exerciseMain" id="exerciseMain">
+                
+                <input class="btn" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)"><!--
+                --><input id="setsCompleted" type="number" value="0" min="0"
+                 style="width:40px; margin:0px;"><!--
+                --><input class="btn" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
+                <div id="notes">
+                    <p class="exerciseNote hidden" style="font-size: large;">example note</p>
+                </div>
+
+                <!-- user mode configuration -->
+                <span class="user hidden">category</span><input class="user hidden" onchange="_save_exercise_obj(this.parentElement.parentElement)" id="exerciseCategory" type="number" value="1" min="1" max="7" style="width:40px;">
+                <br class="user hidden">
+                <div style="text-align: right;">
+                    <input style="width:94%; height:80px; margin-left: 3%; background-color: rgb(33, 33, 33);" type="text" value="" id="noteInput" class="user hidden">
+                    <input class="btn user hidden" type="submit" value="ADD NOTE" onclick="addNote(this)" >
+                </div>
+                <!-- user mode configuration -->
+            </div>
+            
+
+            <!-- meta data-->
             <div id="details">
                 <p id="TargetMuscle" class="hidden">Target muscle: </p>
                 <p id="Synergists" class="hidden">Synergists: </p>
@@ -197,20 +239,7 @@ long range possibilities:
             <div id="tags" class="hidden">
                 <span>tag0</span>
             </div>
-            <div id="exerciseMain">
-                <span class="user hidden">category</span><input class="user hidden" onchange="_save_exercise_obj(this.parentElement.parentElement)" id="exerciseCategory" type="number" value="1" min="1" max="7" style="width:40px;">
-                <br class="user hidden">
-                <input class="btn" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)">
-                <input id="setsCompleted" type="number" value="0" min="0" style="width:40px;">
-                <input class="btn" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
-                <div style="text-align: right;">
-                    <input style="width:94%; height:80px; margin-left: 3%; background-color: rgb(33, 33, 33);" type="text" value="" id="noteInput" class="user hidden">
-                    <input class="btn user hidden" type="submit" value="ADD NOTE" onclick="addNote(this)" >
-                </div>
-            </div>
-            <div id="notes">
-                <p class="hidden" style="font-size: large;">example note</p>
-            </div>
+            <!-- meta data-->
         </div>
     </div>
 
@@ -301,7 +330,7 @@ long range possibilities:
             const template = notes_element.children[0]
 
             const note = template.cloneNode(true)
-            note.textContent = text_element.value
+            note.textContent = "-" + text_element.value
             text_element.value = ""
             note.classList.remove(`hidden`)
             notes_element.appendChild(note)
@@ -424,10 +453,12 @@ long range possibilities:
                 exercise_img_element.classList.add(`hidden`)
                 exercise_main_div.classList.add(`hidden`)
                 exercise_notes_element.classList.add(`hidden`)
+                exercise_element.classList.add(`minimized`)
             }else{
                 exercise_img_element.classList.remove(`hidden`)
                 exercise_main_div.classList.remove(`hidden`)
                 exercise_notes_element.classList.remove(`hidden`)
+                exercise_element.classList.remove(`minimized`)
             }
         }
 
@@ -507,7 +538,7 @@ long range possibilities:
             const template = notes_element.children[0]
             for(const note_str of obj.notes){
                 const note_element = template.cloneNode(true)
-                note_element.textContent = note_str
+                note_element.textContent = "-" + note_str
                 note_element.classList.remove(`hidden`)
                 notes_element.appendChild(note_element)
             }
@@ -556,6 +587,7 @@ long range possibilities:
             await _applyTargetFilter();
             await _applySynergistFilter();    
             await _applyCategoryFilter();   
+            CONTAINER.children[0].classList.add(`hidden`)
         }
         async function _resetFilter(){
             Array.from(CONTAINER.children).forEach(e => e.classList.remove(`hidden`))
