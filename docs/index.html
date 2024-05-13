@@ -77,13 +77,14 @@ long range possibilities:
             border: 0px;
         }
         .exercise > h1 {
+            position:relative;
             font-size: smaller;
             min-width: 80%;
             padding: 0;
             height: 2em;
             padding-left: 10%;
             padding-right: 10%;
-            z-index: 2;
+            z-index: 99;
         }
         .exerciseNote{
             display: inline-block;
@@ -127,10 +128,7 @@ long range possibilities:
             width: 50px;
             height: 50px;
         }
-        .minimized {
-            min-height: 15px;
-            max-height: 15px;
-        }
+        
         .saved {
             color:gold;
             border-color: gold;
@@ -206,6 +204,11 @@ long range possibilities:
             color: black;
             background-color: white;
         }
+        .minimized {
+            min-height: 2em;
+            max-height: 2em;
+            color: gray;
+        }
     </style>
 </head>
 <body>
@@ -247,13 +250,12 @@ long range possibilities:
                 <option value="7">7</option>
             </select> 
         </div>
-        <!--<input class="btn" type="submit" value="APPLY FILTER" onclick="applyFilter()">-->
         <br>
-        <input class="btn" type="submit" id="userMode" onclick="userMode(this)" value="USER MODE">
-        <input class="btn user hidden" type="file" id="fileInput" accept=".json">
-        <input class="btn user hidden" type="submit" onclick="save_user()" value="SAVE USER">
-        <input class="btn user hidden" type="submit" onclick="reset()" value="RESET USER">
         <input class="btn" type="submit" onclick="toggle_dark_mode(this)" value="LIGHT MODE">
+        <input class="btn" type="submit" id="userMode" onclick="userMode(this)" value="USER MODE">
+        <input class="btn user hidden" type="submit" onclick="save_user()" value="SAVE USER">
+        <input class="btn user hidden" type="file" id="fileInput" accept=".json">
+        <input class="btn user hidden" type="submit" onclick="reset()" value="RESET USER">
         <input class="btn fixed" type="submit" onclick="lock_user(this)" value="UNLOCK" id="userLock">
     </navbar>
 
@@ -536,18 +538,21 @@ long range possibilities:
             const exercise_main_div = exercise_element.querySelector(`#exerciseMain`)
             const exercise_notes_element = exercise_element.querySelector(`#notes`)
             const favourite_btn = exercise_element.querySelector(`.favouriteBtn`)
+            const exercise_title = exercise_element.querySelector(`#name`)
             if(!minimized){
                 favourite_btn.classList.add(`hidden`)
                 exercise_img_element.classList.add(`hidden`)
                 exercise_main_div.classList.add(`hidden`)
                 exercise_notes_element.classList.add(`hidden`)
                 exercise_element.classList.add(`minimized`)
+                exercise_title.classList.add(`minimized`)
             }else{
                 favourite_btn.classList.remove(`hidden`)
                 exercise_img_element.classList.remove(`hidden`)
                 exercise_main_div.classList.remove(`hidden`)
                 exercise_notes_element.classList.remove(`hidden`)
                 exercise_element.classList.remove(`minimized`)
+                exercise_title.classList.remove(`minimized`)
             }
         }
 
