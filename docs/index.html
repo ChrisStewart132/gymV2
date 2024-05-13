@@ -96,6 +96,7 @@ long range possibilities:
             background-color: rgb(255,255,255,0.5);
             color: black;
             font-size: small;
+            user-select: none; /* Prevent text selection */
         }
         .exerciseMain > #notes{
             position: absolute;
@@ -268,20 +269,27 @@ long range possibilities:
             <input class="minimizeBtn" type="submit" value="-" onclick="_toggleMinimizeExercise(this.parentElement)">
             <div class="exerciseMain" id="exerciseMain">
                 
+                <!-- set counter (NOT USED) -->
                 <input class="btn hidden" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)"><!--
                 --><input class="hidden" id="setsCompleted" type="number" value="0" min="0"
                  style="width:40px; margin:0px;"><!--
                 --><input class="btn hidden" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
+                <!-- set counter (NOT USED) -->
+
+                <!-- notes -->
                 <div id="notes">
                     <p class="exerciseNote hidden">example note</p>
                 </div>
+                <!-- notes -->
 
                 <!-- user mode configuration -->
                 <span class="user hidden">category</span><input class="user hidden" onchange="_save_exercise_obj(this.parentElement.parentElement)" id="exerciseCategory" type="number" value="1" min="1" max="7" style="width:40px;">
                 <br class="user hidden">
                 <div style="text-align: right;">
-                    <input style="width:94%; height:80px; margin-left: 3%; background-color: rgb(33, 33, 33);" type="text" value="" id="noteInput" class="user hidden">
-                    <input class="btn user hidden" type="submit" value="ADD NOTE" onclick="addNote(this)" >
+                    <input style="width:94%; height:2em; margin-left: 3%; background-color: rgb(33, 33, 33);" type="text" value="" id="noteInput" class="user hidden">
+                    <input class="btn user hidden" type="submit" value="ADD NOTE" onclick="addNote(this)">
+                    <input class="btn user hidden" type="submit" value="CLEAR NOTES" onclick="
+                    clearNotes(this.parentElement.parentElement.querySelector(`#notes`), this.parentElement.parentElement.parentElement)" >
                 </div>
                 <!-- user mode configuration -->
             </div>
@@ -314,7 +322,6 @@ long range possibilities:
         load_exercises();
 
         function toggle_dark_mode(btn_element){
-            // TODO
             const mode = btn_element.value
             if(mode === "DARK MODE"){
                 btn_element.value = "LIGHT MODE"
@@ -425,6 +432,13 @@ long range possibilities:
             _save_exercise_obj(exercise_element)
             note.textContent = "-" + text_element.value
             text_element.value = ""
+        }
+        function clearNotes(notes_element, exercise_element){
+            Array.from(notes_element.children).forEach((note) => {
+                if(!note.classList.contains(`hidden`))
+                    notes_element.removeChild(note)
+            })
+            _save_exercise_obj(exercise_element)
         }
         function _get_exercise_key(exercise_element){
             return exercise_element.querySelector(`#name`).textContent
