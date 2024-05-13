@@ -57,6 +57,7 @@ long range possibilities:
         }
         h1{padding: 3px;}
         .exercise {
+            position: relative;
             display: inline-block;
             background-color: black;
             padding: 0px;
@@ -85,7 +86,8 @@ long range possibilities:
             font-size: small;
             min-width: 100%;
             padding: 0;
-            height: 15px;
+            height: 1em;
+            padding-top: 2px;
         }
         .exerciseNote{
             display: inline-block;
@@ -97,9 +99,19 @@ long range possibilities:
         .exerciseMain > #notes{
 
         }
+        .minimizeBtn{
+            position: absolute;
+            top:-10px;
+            z-index: 100;
+            left:92%;
+            height:15px;
+            width:8%;
+            padding: auto;
+        }
         .btn{  
             padding: auto;
             border: 1px solid white;
+            z-index: 100;
         }
         .exercise > .btn{
             width: 50px;
@@ -207,7 +219,7 @@ long range possibilities:
         <div class="exercise" onclick="selectExercise(this, event)">
             <h1 id="name">NAME</h1>
             <img src="assets/data/exercises/90-degree crunch on bench.webp">
-            
+            <input class="minimizeBtn" type="submit" value="-" onclick="_toggleMinimizeExercise(this.parentElement)">
             <div class="exerciseMain" id="exerciseMain">
                 
                 <input class="btn hidden" type="submit" value="--" onclick="decrementExerciseSetsCompleted(this)"><!--
@@ -330,11 +342,12 @@ long range possibilities:
             const template = notes_element.children[0]
 
             const note = template.cloneNode(true)
-            note.textContent = "-" + text_element.value
-            text_element.value = ""
+            note.textContent = text_element.value        
             note.classList.remove(`hidden`)
             notes_element.appendChild(note)
             _save_exercise_obj(exercise_element)
+            note.textContent = "-" + text_element.value
+            text_element.value = ""
         }
         function _get_exercise_key(exercise_element){
             return exercise_element.querySelector(`#name`).textContent
@@ -435,7 +448,7 @@ long range possibilities:
                 return
 
             if(USER_LOCKED){// minimize/hide exercise
-                _toggleMinimizeExercise(exercise_element)
+                //_toggleMinimizeExercise(exercise_element)
             } else if(exercise_element.classList.contains(`saved`)){
                 exercise_element.classList.remove(`saved`)
                 _unsaveExercise(exercise_element)
