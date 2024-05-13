@@ -67,7 +67,7 @@ long range possibilities:
             width: 300px;
         }
         .exercise:hover{
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            /*box-shadow: 0 0 20px rgba(255, 255, 255, 1);*/
         }
         .exercise > img {
             height: auto;
@@ -112,6 +112,7 @@ long range possibilities:
             position: absolute;
             top:182.5px;
             height:1.5em;
+            color: gray;
         }
         .btn{  
             padding: auto;
@@ -127,7 +128,10 @@ long range possibilities:
             max-height: 15px;
         }
         .saved {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+            /*box-shadow: 0 0 20px rgba(255, 255, 255, 1);*/
+        }
+        .saved > .favouriteBtn {
+            color: gold;
         }
         .hidden{
             display: none;
@@ -449,10 +453,12 @@ long range possibilities:
         function toggle_exercise_favourite(favourite_btn, exercise_element){
             if(exercise_element.classList.contains(`saved`)){
                 exercise_element.classList.remove(`saved`)
+                favourite_btn.style.color = "gray"
                 _unsaveExercise(exercise_element)
             }else{
                 exercise_element.classList.add(`saved`)
                 _save_exercise_obj(exercise_element)
+                favourite_btn.style.color = "gold"
             }
         }
 
