@@ -79,11 +79,13 @@ long range possibilities:
         .exercise > h1 {
             color: black;
             background-color: white;
-            font-size: small;
-            min-width: 100%;
+            font-size: smaller;
+            min-width: 80%;
             padding: 0;
-            height: 1em;
+            height: 2em;
             padding-top: 2px;
+            padding-left: 10%;
+            padding-right: 10%;
         }
         .exerciseNote{
             display: inline-block;
@@ -107,13 +109,13 @@ long range possibilities:
             top:-10px;
             z-index: 99;
             left:92%;
-            height:1em;
+            height:2em;
             width:8%;
             font-size: smaller;
         }
         .favouriteBtn{
             position: absolute;
-            top:183px;
+            top:192px;
             height:2em;
             color: gray;
         }
@@ -131,9 +133,15 @@ long range possibilities:
             min-height: 15px;
             max-height: 15px;
         }
-        .saved {}
+        .saved {
+            color:gold;
+            border-color: gold;
+        }
         .saved > .favouriteBtn {
             color: gold;
+        }
+        #userMode > .saved{
+            color:gold;
         }
         .hidden{
             display: none;
