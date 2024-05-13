@@ -15,7 +15,7 @@ USER
     LOCK USER MODE preventing save/unsave 
     hiding/revealing of user input fields while locked/unlocked
     custom categorization of exercises + filter 
-        refactor saving/loading category+saved_status to a JSON obj (TODO)
+        refactor saving/loading category+saved_status to a JSON obj
         currently exercises can only belong to 1 category, workout creator that saves an obj listing all exercises (TODO)
 
 
@@ -77,8 +77,6 @@ long range possibilities:
             border: 0px;
         }
         .exercise > h1 {
-            color: black;
-            background-color: white;
             font-size: smaller;
             min-width: 80%;
             padding: 0;
@@ -200,6 +198,14 @@ long range possibilities:
             bottom: 5%;
             right: 5%;
         }
+        .darkMode{
+            color:white;
+            background-color: black;
+        }
+        .lightMode{
+            color: black;
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -247,14 +253,15 @@ long range possibilities:
         <input class="btn" type="file" id="fileInput" accept=".json">
         <input class="btn" type="submit" onclick="save_user()" value="SAVE USER">
         <input class="btn" type="submit" onclick="reset()" value="RESET USER">
+        <input class="btn" type="submit" onclick="toggle_dark_mode(this)" value="LIGHT MODE">
         <input class="btn fixed" type="submit" onclick="lock_user(this)" value="UNLOCK" id="userLock">
     </navbar>
 
     <div class="container">
         <!-- template exercise block to be duplicated -->
         <div class="exercise">
-            <h1 id="name">NAME</h1>
-            <img src="assets/data/exercises/90-degree crunch on bench.webp">
+            <h1 class="darkMode" id="name">NAME</h1>
+            <img src="assets/data/inverted_exercises/90-degree crunch on bench.webp">
             <input class="favouriteBtn" type="submit" value="+" onclick="toggle_exercise_favourite(this, this.parentElement)">
             <input class="minimizeBtn" type="submit" value="-" onclick="_toggleMinimizeExercise(this.parentElement)">
             <div class="exerciseMain" id="exerciseMain">
@@ -303,6 +310,37 @@ long range possibilities:
 
         load_filters();
         load_exercises();
+
+        function toggle_dark_mode(btn_element){
+            // TODO
+            const mode = btn_element.value
+            if(mode === "DARK MODE"){
+                btn_element.value = "LIGHT MODE"
+                _dark_mode()
+            }else{
+                btn_element.value = "DARK MODE"
+                _light_mode()
+            }
+        }
+
+        function _dark_mode(){
+            Array.from(CONTAINER.children).forEach((e) => {
+                e.querySelector(`#name`).classList.remove(`lightMode`)
+                e.querySelector(`#name`).classList.add(`darkMode`)
+                // invert image
+                const img = e.querySelector(`img`)
+                img.src = img.src.replace("/exercises/", "/inverted_exercises/")
+            })
+        }
+        function _light_mode(){
+            Array.from(CONTAINER.children).forEach((e) => {
+                e.querySelector(`#name`).classList.remove(`darkMode`)
+                e.querySelector(`#name`).classList.add(`lightMode`)
+                // invert image
+                const img = e.querySelector(`img`)
+                img.src = img.src.replace("/inverted_exercises/", "/exercises/")
+            })
+        }
 
         function lock_user(btn_element){
             /* toggles the USER_LOCKED flag, locking various btns from being clicked */
@@ -602,7 +640,7 @@ long range possibilities:
 
             const metadata = await fetch(`assets/data/exercises/${name}.json`).then(r => r.json());
             //console.log(metadata)
-            exercise_element.querySelector('img').src = `assets/data/exercises/${name}.webp`
+            exercise_element.querySelector('img').src = `assets/data/inverted_exercises/${name}.webp`
 
             exercise_element.querySelector('#TargetMuscle').textContent += metadata[`Target muscle`]
             exercise_element.querySelector('#Synergists').textContent += metadata[`Synergists`]
