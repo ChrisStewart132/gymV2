@@ -62,7 +62,7 @@ long range possibilities:
             background-color: black;
             padding: 0px;
             vertical-align: text-top;
-            margin: 1px;
+            margin: 2px;
             border-radius: 0px;
             width: 300px;
         }
@@ -99,14 +99,19 @@ long range possibilities:
         .exerciseMain > #notes{
 
         }
-        .minimizeBtn{
+        .minimizeBtn, .favouriteBtn{
             position: absolute;
             top:-10px;
             z-index: 100;
             left:92%;
-            height:15px;
+            height:1em;
             width:8%;
-            padding: auto;
+            font-size: smaller;
+        }
+        .favouriteBtn{
+            position: absolute;
+            top:182.5px;
+            height:1.5em;
         }
         .btn{  
             padding: auto;
@@ -219,6 +224,7 @@ long range possibilities:
         <div class="exercise" onclick="selectExercise(this, event)">
             <h1 id="name">NAME</h1>
             <img src="assets/data/exercises/90-degree crunch on bench.webp">
+            <input class="favouriteBtn" type="submit" value="+" onclick="toggle_exercise_favourite(this, this.parentElement)">
             <input class="minimizeBtn" type="submit" value="-" onclick="_toggleMinimizeExercise(this.parentElement)">
             <div class="exerciseMain" id="exerciseMain">
                 
@@ -440,13 +446,24 @@ long range possibilities:
             location.reload()
         }
 
+        function toggle_exercise_favourite(favourite_btn, exercise_element){
+            if(exercise_element.classList.contains(`saved`)){
+                exercise_element.classList.remove(`saved`)
+                _unsaveExercise(exercise_element)
+            }else{
+                exercise_element.classList.add(`saved`)
+                _save_exercise_obj(exercise_element)
+            }
+        }
+
         function selectExercise(exercise_element, event){
             /* implements logic when an exercise element is clicked (onClick) */
 
             // if child input elements selected dont select the exercise
             if(event.target.type === "submit" || event.target.type === "text" || event.target.type === "number")
                 return
-
+            // using minimize and favouriting btn now
+            /*
             if(USER_LOCKED){// minimize/hide exercise
                 //_toggleMinimizeExercise(exercise_element)
             } else if(exercise_element.classList.contains(`saved`)){
@@ -456,18 +473,22 @@ long range possibilities:
                 exercise_element.classList.add(`saved`)
                 _save_exercise_obj(exercise_element)
             }
+            */
         }
         function _toggleMinimizeExercise(exercise_element){
             const exercise_img_element = exercise_element.querySelector(`img`)
             const minimized = exercise_img_element.classList.contains(`hidden`)
             const exercise_main_div = exercise_element.querySelector(`#exerciseMain`)
             const exercise_notes_element = exercise_element.querySelector(`#notes`)
+            const favourite_btn = exercise_element.querySelector(`.favouriteBtn`)
             if(!minimized){
+                favourite_btn.classList.add(`hidden`)
                 exercise_img_element.classList.add(`hidden`)
                 exercise_main_div.classList.add(`hidden`)
                 exercise_notes_element.classList.add(`hidden`)
                 exercise_element.classList.add(`minimized`)
             }else{
+                favourite_btn.classList.remove(`hidden`)
                 exercise_img_element.classList.remove(`hidden`)
                 exercise_main_div.classList.remove(`hidden`)
                 exercise_notes_element.classList.remove(`hidden`)
