@@ -91,18 +91,25 @@ long range possibilities:
         }
         .exerciseNote{
             display: inline-block;
-            padding: 5px;
+            padding: 0px;
             margin: 1px;
             margin-right: 5px;
             text-align: left;
+            z-index: 99;
+            background-color: rgb(255,255,255,0.5);
+            color: black;
+            font-size: small;
         }
         .exerciseMain > #notes{
-
+            position: absolute;
+            bottom: 0%;
+            left:5%;
+            background-color: transparent;
         }
         .minimizeBtn, .favouriteBtn{
             position: absolute;
             top:-10px;
-            z-index: 100;
+            z-index: 99;
             left:92%;
             height:1em;
             width:8%;
@@ -237,7 +244,7 @@ long range possibilities:
                  style="width:40px; margin:0px;"><!--
                 --><input class="btn hidden" type="submit" value="++" onclick="incrementExerciseSetsCompleted(this)">
                 <div id="notes">
-                    <p class="exerciseNote hidden" style="font-size: large;">example note</p>
+                    <p class="exerciseNote hidden">example note</p>
                 </div>
 
                 <!-- user mode configuration -->
