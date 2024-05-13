@@ -459,6 +459,9 @@ long range possibilities:
 
         function toggle_exercise_favourite(favourite_btn, exercise_element){
             if(exercise_element.classList.contains(`saved`)){
+                const name = exercise_element.querySelector(`#name`).textContent
+                if(!confirm(`unfavourite ${name} and remove associated data?`))
+                    return;
                 exercise_element.classList.remove(`saved`)
                 favourite_btn.style.color = "gray"
                 _unsaveExercise(exercise_element)
