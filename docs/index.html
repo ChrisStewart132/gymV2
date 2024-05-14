@@ -695,10 +695,10 @@ long range possibilities:
             return exercise_element;
         }
 
-        async function applyFilter(){
+        function applyFilter(){
             const userModeElement = document.getElementById(`userMode`)
             if(!userModeElement.classList.contains(`saved`)){// not in user mode
-                await _resetFilter();// un-hides all exercises
+                _resetFilter();// un-hides all exercises
             }else{// user mode active so reveal user saved exercises
                 Array.from(CONTAINER.children).forEach(e => {
                     const key = e.querySelector(`#name`).textContent
@@ -727,7 +727,7 @@ long range possibilities:
             })
             CONTAINER.children[0].classList.add(`hidden`)// hide template exercise
         }
-        async function _resetFilter(){
+        function _resetFilter(){
             Array.from(CONTAINER.children).forEach(e => e.classList.remove(`hidden`))
         }
         function _applyEquipmentFilter(query, exercise_element){
@@ -770,7 +770,7 @@ long range possibilities:
         }
 
         function search(query){
-            console.log(query)
+            _resetFilter()
             Array.from(CONTAINER.children).forEach(e => {
                 if(e.classList.contains(`hidden`))
                     return   
