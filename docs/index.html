@@ -5,7 +5,7 @@ HOME
     exercises are loaded from local files,
     exercises can be filtered by equipment, target muscle, synergist muscles, and force (push vs pull)
     exercises include sets completed 
-        name/title filter (TODO)
+        search function (TODO)
         css adaptive sizing/layout (mobile) (TODO)
 USER 
     exercises can be saved (with a visual cue i.e css color scheme) to local storage and viewed on a user page
@@ -163,7 +163,7 @@ long range possibilities:
             color:black;
             background-color: white;
         }
-        select{
+        select, .searchBtn{
             background-color: black;
             border: 1px solid white;
             color: white;
@@ -210,6 +210,14 @@ long range possibilities:
             max-height: 2em;
             color: gray;
         }
+        .searchInput{
+            height: 2em;
+            width: 20em;
+            border: 1px solid white;
+        }
+        .searchBtn{
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -251,6 +259,10 @@ long range possibilities:
                 <option value="7">7</option>
             </select> 
         </div>
+        <div class="filterContainer">    
+            <input class="searchInput" type="input" value="" title="search..."><!--
+            --><input class="btn searchBtn" type="submit" onclick="search(this.parentElement.children[0].value)" value="SEARCH">
+        </div>
         <br>
         <input class="btn" type="submit" onclick="toggle_dark_mode(this)" value="LIGHT MODE">
         <input class="btn" type="submit" id="userMode" onclick="userMode(this)" value="USER MODE">
@@ -265,8 +277,8 @@ long range possibilities:
         <div class="exercise">
             <h1 class="darkMode" id="name">NAME</h1>
             <img src="assets/data/inverted_exercises/90-degree crunch on bench.webp">
-            <input class="favouriteBtn" type="submit" value="+" onclick="toggle_exercise_favourite(this, this.parentElement)">
-            <input class="minimizeBtn" type="submit" value="-" onclick="_toggleMinimizeExercise(this.parentElement)">
+            <input class="favouriteBtn" title="favourite" type="submit" value="+" onclick="toggle_exercise_favourite(this, this.parentElement)">
+            <input class="minimizeBtn" title="minimize" type="submit" value="-" onclick="_toggleMinimizeExercise(this.parentElement)">
             <div class="exerciseMain" id="exerciseMain">
                 
                 <!-- set counter (NOT USED) -->
@@ -320,6 +332,8 @@ long range possibilities:
 
         load_filters();
         load_exercises();
+
+        
 
         function toggle_dark_mode(btn_element){
             const mode = btn_element.value
@@ -434,6 +448,8 @@ long range possibilities:
             text_element.value = ""
         }
         function clearNotes(notes_element, exercise_element){
+            if(!confirm("clear all notes?"))
+                return
             Array.from(notes_element.children).forEach((note) => {
                 if(!note.classList.contains(`hidden`))
                     notes_element.removeChild(note)
@@ -690,65 +706,84 @@ long range possibilities:
                         e.classList.remove(`hidden`)
                 })
             }
-            const equipment = document.getElementById("equipment")
-            const ForceSelection = document.getElementById("ForceSelection")
-            const TargetMuscleFilter = document.getElementById("TargetMuscleFilter")
-            const SynergistMuscleFilter = document.getElementById("SynergistMuscleFilter")
-            const categorySelection = document.getElementById("categorySelection")
+            const equipment = document.getElementById("equipment").value
+            const ForceSelection = document.getElementById("ForceSelection").value
+            const TargetMuscleFilter = document.getElementById("TargetMuscleFilter").value
+            const SynergistMuscleFilter = document.getElementById("SynergistMuscleFilter").value
+            const categorySelection = document.getElementById("categorySelection").value
             Array.from(CONTAINER.children).forEach(e => {
                 if(e.classList.contains(`hidden`))
                     return   
-                _applyEquipmentFilter(equipment, e)
-                _applyForceFilter(ForceSelection, e)
-                _applyTargetFilter(TargetMuscleFilter, e)
-                _applySynergistFilter(SynergistMuscleFilter, e)
-                _applyCategoryFilter(categorySelection, e)
+                if(_applyEquipmentFilter(equipment, e))
+                    e.classList.add(`hidden`)
+                if(_applyForceFilter(ForceSelection, e))
+                    e.classList.add(`hidden`)
+                if(_applyTargetFilter(TargetMuscleFilter, e))
+                    e.classList.add(`hidden`)
+                if(_applySynergistFilter(SynergistMuscleFilter, e))
+                    e.classList.add(`hidden`)
+                if(_applyCategoryFilter(categorySelection, e))
+                    e.classList.add(`hidden`)
             })
             CONTAINER.children[0].classList.add(`hidden`)// hide template exercise
         }
         async function _resetFilter(){
             Array.from(CONTAINER.children).forEach(e => e.classList.remove(`hidden`))
         }
-        async function _applyEquipmentFilter(filter, exercise_element){
-            if(filter.value != 'empty'){
+        function _applyEquipmentFilter(query, exercise_element){
+            if(query != 'empty'){
                 const tags = exercise_element.querySelector(`#tags`)
                 const arr = Array.from(tags.children, e => e.textContent)
-                if(!arr.includes(filter.value)){
-                    exercise_element.classList.add(`hidden`)
-                }
+                return !arr.includes(query)
             }
+            return false
         }
-        async function _applyForceFilter(filter, e){
-            if(filter.value != 'empty'){
+        function _applyForceFilter(query, e){
+            if(query != 'empty'){
                 const str = e.querySelector(`#Force`).textContent
-                if(!str.includes(filter.value)){
-                    e.classList.add(`hidden`)
-                }
+                return !str.includes(query)
             }
+            return false
         }
-        async function _applyTargetFilter(filter, e){
-            if(filter.value != 'empty'){
+        function _applyTargetFilter(query, e){
+            if(query != 'empty'){
                 const str = e.querySelector(`#TargetMuscle`).textContent
-                if(!str.includes(filter.value)){
-                    e.classList.add(`hidden`)
-                }
+                return !str.includes(query)
             }
+            return false
         }
-        async function _applySynergistFilter(filter, e){
-            if(filter.value != 'empty'){
+        function _applySynergistFilter(query, e){
+            if(query != 'empty'){
                 const str = e.querySelector(`#Synergists`).textContent
-                if(!str.includes(filter.value)){
-                    e.classList.add(`hidden`)
-                }
+                return !str.includes(query)
             }
+            return false
         }
-        async function _applyCategoryFilter(filter, e){
-            if(!filter.value)
-                return
+        function _applyCategoryFilter(query, e){
+            if(!query)
+                return false
             const str = _get_exercise_category(e).toString()
-            if(str !== filter.value){
-                e.classList.add(`hidden`)
+            if(str !== query){
+                return true
             }
+            return false
+        }
+
+        function search(query){
+            console.log(query)
+            Array.from(CONTAINER.children).forEach(e => {
+                if(e.classList.contains(`hidden`))
+                    return   
+                const name = e.querySelector(`#name`).textContent
+                const match = name.includes(query) /*||
+                _applyEquipmentFilter(equipment, e) ||
+                _applyForceFilter(ForceSelection, e) ||
+                _applyTargetFilter(TargetMuscleFilter, e) ||
+                _applySynergistFilter(SynergistMuscleFilter, e) ||
+                _applyCategoryFilter(categorySelection, e)*/
+                if(!match)
+                    e.classList.add(`hidden`)
+            })
         }
     </script>
 </body>
