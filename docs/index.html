@@ -5,7 +5,7 @@ HOME
     exercises are loaded from local files,
     exercises can be filtered by equipment, target muscle, synergist muscles, and force (push vs pull)
     exercises include sets completed 
-        search function (TODO)
+        search function
         css adaptive sizing/layout (mobile) (TODO)
 USER 
     exercises can be saved (with a visual cue i.e css color scheme) to local storage and viewed on a user page
@@ -260,8 +260,8 @@ long range possibilities:
             </select> 
         </div>
         <div class="filterContainer">    
-            <input class="searchInput" type="input" value="" title="search..."><!--
-            --><input class="btn searchBtn" type="submit" onclick="search(this.parentElement.children[0].value)" value="SEARCH">
+            <input id="searchInput" class="searchInput" type="input" value="" title="search..."><!--
+            --><input class="btn searchBtn" type="submit" onclick="applyFilter()" value="SEARCH">
         </div>
         <br>
         <input class="btn" type="submit" onclick="toggle_dark_mode(this)" value="LIGHT MODE">
@@ -695,17 +695,21 @@ long range possibilities:
             return exercise_element;
         }
 
+        function _hide_unsaved_exercises(){
+            Array.from(CONTAINER.children).forEach(e => {
+                const key = e.querySelector(`#name`).textContent
+                if(localStorage.getItem(key) === null)
+                    e.classList.add(`hidden`)
+            })
+        }
+
         function applyFilter(){
-            const userModeElement = document.getElementById(`userMode`)
-            if(!userModeElement.classList.contains(`saved`)){// not in user mode
-                _resetFilter();// un-hides all exercises
-            }else{// user mode active so reveal user saved exercises
-                Array.from(CONTAINER.children).forEach(e => {
-                    const key = e.querySelector(`#name`).textContent
-                    if(localStorage.getItem(key) !== null)
-                        e.classList.remove(`hidden`)
-                })
-            }
+            _resetFilter()
+            const query = document.getElementById(`searchInput`).value
+            // hide exercises not matching search query
+            _search(query)
+
+            // hide exercises filtered out
             const equipment = document.getElementById("equipment").value
             const ForceSelection = document.getElementById("ForceSelection").value
             const TargetMuscleFilter = document.getElementById("TargetMuscleFilter").value
@@ -726,9 +730,15 @@ long range possibilities:
                     e.classList.add(`hidden`)
             })
             CONTAINER.children[0].classList.add(`hidden`)// hide template exercise
+            
+            
         }
         function _resetFilter(){
             Array.from(CONTAINER.children).forEach(e => e.classList.remove(`hidden`))
+            const userModeElement = document.getElementById(`userMode`)
+            if(userModeElement.classList.contains(`saved`)){
+                _hide_unsaved_exercises()
+            }
         }
         function _applyEquipmentFilter(query, exercise_element){
             if(query != 'empty'){
@@ -769,8 +779,10 @@ long range possibilities:
             return false
         }
 
-        function search(query){
-            _resetFilter()
+        function _search(query){
+            console.log("search:" + query)
+            if(query === "")
+                return
             Array.from(CONTAINER.children).forEach(e => {
                 if(e.classList.contains(`hidden`))
                     return   
