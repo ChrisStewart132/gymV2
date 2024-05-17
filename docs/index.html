@@ -34,191 +34,9 @@ long range possibilities:
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="assets/styles/styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GymV2</title>
-    <style>
-        * {
-            border: 0px solid rgb(16, 16, 16);
-            color: white;  
-            background-color: black;
-            text-align: center;
-            margin: 0px;
-            vertical-align: middle;
-            font-family: Lucida Console;
-            font-size: small;
-        }
-        body {
-            background-color: black;
-            overflow: auto; 
-        }
-        .container {
-            border: 1px solid rgb(16, 16, 16);
-            margin-bottom: 150px;
-        }
-        h1{padding: 3px;}
-        .exercise {
-            position: relative;
-            display: inline-block;
-            background-color: black;
-            padding: 0px;
-            vertical-align: text-top;
-            margin: 2px;
-            border-radius: 0px;
-            width: 300px;
-        }
-        .exercise > img {
-            height: auto;
-            width: 100%;
-        }
-        .exerciseMain{}
-        .exerciseMain > .btn{
-            padding: 10px;
-            margin: 5px;
-            border: 0px;
-        }
-        .exercise > h1 {
-            position:relative;
-            font-size: smaller;
-            min-width: 80%;
-            padding: 0;
-            height: 2em;
-            padding-left: 10%;
-            padding-right: 10%;
-            z-index: 99;
-        }
-        .exerciseNote{
-            display: inline-block;
-            padding: 0px;
-            margin: 1px;
-            margin-right: 5px;
-            text-align: left;
-            z-index: 99;
-            background-color: rgb(255,255,255,0.5);
-            color: black;
-            font-size: small;
-            user-select: none; /* Prevent text selection */
-        }
-        .exerciseMain > #notes{
-            position: absolute;
-            bottom: 0%;
-            left:5%;
-            background-color: transparent;
-        }
-        .minimizeBtn, .favouriteBtn{
-            position: absolute;
-            top:-10px;
-            z-index: 99;
-            left:92%;
-            height:2em;
-            width:8%;
-            font-size: smaller;
-        }
-        .favouriteBtn{
-            position: absolute;
-            top:192px;
-            height:2em;
-            color: gray;
-        }
-        .btn{  
-            padding: 1em;
-            border: 1px solid white;
-            z-index: 100;
-            min-width: 10em;
-        }
-        .exercise > .btn{
-            width: 50px;
-            height: 50px;
-        }
-        
-        .saved {
-            color:gold;
-            border-color: gold;
-        }
-        .saved > .favouriteBtn {
-            color: gold;
-        }
-        #userMode > .saved{
-            color:gold;
-        }
-        .hidden{
-            display: none;
-        }
-        p, span{ 
-            padding: 2px;
-            font-size: large;
-        }
-        .tag {
-            border: 1px solid gray;
-            padding: 1px;
-            margin: 2px;
-            font-size: smaller;
-        }
-        #details > p {
-            text-align: left;
-        }
-        .filterContainer {
-            display: inline-block;
-        }
-        select:hover{
-            color:black;
-            background-color: white;
-        }
-        select, .searchBtn{
-            background-color: black;
-            border: 1px solid white;
-            color: white;
-            width: 8em;
-            height: 2em;
-            font-size: small;
-        }
-        option{
-            font-size: smaller;
-        }
-        input, select, .btn{
-            margin-right: 20px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-        input:hover{
-            background-color: white;
-            color: black;
-        }      
-        .user{}
-        label {
-            margin-right: 0;
-            font-size: small;
-            user-select: none; /* Prevent text selection */
-        }
-        navbar {
-            font-size: 0;/* to remove inline block whitespace */
-        }
-        .fixed{
-            position: fixed;
-            bottom: 5%;
-            right: 5%;
-        }
-        .darkMode{
-            color:white;
-            background-color: black;
-        }
-        .lightMode{
-            color: black;
-            background-color: white;
-        }
-        .minimized {
-            min-height: 2em;
-            max-height: 2em;
-            color: gray;
-        }
-        .searchInput{
-            height: 2em;
-            width: 20em;
-            border: 1px solid white;
-        }
-        .searchBtn{
-            padding: 0;
-        }
-    </style>
 </head>
 <body>
     <navbar>
@@ -332,8 +150,6 @@ long range possibilities:
 
         load_filters();
         load_exercises();
-
-        
 
         function toggle_dark_mode(btn_element){
             const mode = btn_element.value
@@ -787,12 +603,7 @@ long range possibilities:
                 if(e.classList.contains(`hidden`))
                     return   
                 const name = e.querySelector(`#name`).textContent
-                const match = name.includes(query) /*||
-                _applyEquipmentFilter(equipment, e) ||
-                _applyForceFilter(ForceSelection, e) ||
-                _applyTargetFilter(TargetMuscleFilter, e) ||
-                _applySynergistFilter(SynergistMuscleFilter, e) ||
-                _applyCategoryFilter(categorySelection, e)*/
+                const match = name.includes(query)
                 if(!match)
                     e.classList.add(`hidden`)
             })
