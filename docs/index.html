@@ -39,6 +39,8 @@ long range possibilities:
     <title>GymV2</title>
 </head>
 <body>
+    <div id="exerciseCount" class="hidden">1</div>
+    <div id="loading">0%</div>
     <navbar>
         <div class="filterContainer">    
             <label for="equipment">equipment</label>
@@ -147,6 +149,7 @@ long range possibilities:
         const FILE_INPUT = document.getElementById('fileInput');
         // user locked flag
         var USER_LOCKED = document.getElementById('userLock').value === "UNLOCK";
+        const EXERCISE_COUNT_ELEMENT = document.querySelector(`#exerciseCount`);
 
         load_filters();
         load_exercises();
@@ -422,7 +425,9 @@ long range possibilities:
             parent.appendChild(option);
         }
         async function load_forces_filter(){
+            console.log("loading forces...")
             const obj = await fetch(`assets/data/forces.json`).then(r=>r.json());
+            console.log("...forces loaded.")
             const parent = document.getElementById(`ForceSelection`)
             obj["forces"].sort()
             obj["forces"].forEach((text) => {
@@ -430,7 +435,9 @@ long range possibilities:
             })
         }
         async function load_equipment_filter(){
+            console.log("loading equipment_tags...")
             const obj = await fetch(`assets/data/equipment_tags.json`).then(r=>r.json());
+            console.log("...equipment_tags loaded.")
             const parent = document.getElementById(`equipment`)
             obj["equipment"].sort()
             obj["equipment"].forEach((text) => {
@@ -438,7 +445,9 @@ long range possibilities:
             })
         }
         async function load_synergist_muscle_filter(){
+            console.log("loading synergists...")
             const obj = await fetch(`assets/data/synergists.json`).then(r=>r.json());
+            console.log("...synergists loaded.")
             const parent = document.getElementById(`SynergistMuscleFilter`)
             obj["synergists"].sort()
             obj["synergists"].forEach((text) => {
@@ -446,7 +455,9 @@ long range possibilities:
             })
         }
         async function load_target_muscle_filter(){
+            console.log("loading target_muscles...")
             const obj = await fetch(`assets/data/target_muscles.json`).then(r=>r.json());
+            console.log("...target_muscles loaded.")
             const parent = document.getElementById(`TargetMuscleFilter`)
             obj["target muscles"].sort()
             obj["target muscles"].forEach((text) => {
@@ -458,7 +469,9 @@ long range possibilities:
         async function load_exercises(){
             /* loads names.json containing the filenames of all .json and img files to be loaded,
              creates all exercise elements and appends them to CONTAINER */
+            console.log("loading names...")
             names_obj = await fetch("assets/data/names.json").then(response => response.json());
+            console.log("...names loaded.")
             names_obj.names.forEach((name, index, arr) => {
                 _load_exercise(name);
             });
@@ -483,11 +496,19 @@ long range possibilities:
                 notes_element.appendChild(note_element)
             }
             CONTAINER.appendChild(exercise_element);
+            let count = parseInt(EXERCISE_COUNT_ELEMENT.textContent)
+            count += 1
+            EXERCISE_COUNT_ELEMENT.textContent = count
+            let percentage = (count/526)*100
+            document.querySelector(`#loading`).textContent = `${percentage.toFixed(2)}%`
+            if(percentage == 100)
+            document.querySelector(`#loading`).classList.add(`hidden`)
         }
         async function _create_exercise_element(name){
             const template = CONTAINER.querySelector(`.exercise`);
             let exercise_element = template.cloneNode(true);
             exercise_element.querySelector('#name').textContent = name; 
+
 
             const metadata = await fetch(`assets/data/exercises/${name}.json`).then(r => r.json());
             //console.log(metadata)
