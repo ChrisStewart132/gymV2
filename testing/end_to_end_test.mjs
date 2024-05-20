@@ -15,7 +15,7 @@ import assert from "node:assert/strict";
 import puppeteer from 'puppeteer';
 
 const URL = "http://127.0.0.1:8000/index.html"
-const SLEEP_MS = 1000
+const SLEEP_MS = 2000
 
 function sleep(ms) {
   //console.log(`sleeping: ${ms}ms`)
