@@ -145,13 +145,13 @@ test("force", { only: true }, async () => {
   
   count = await page.evaluate(filter, id, option)
   sleep(SLEEP_MS)
-  await page.screenshot({path: `testing/images/${option}.png`});
+  await page.screenshot({path: `testing/images/_${option}.png`});
   assert.strictEqual(276, count);
 
   option = " Push"// blame db for the space
   count = await page.evaluate(filter, id, option)
   sleep(SLEEP_MS)
-  await page.screenshot({path: `testing/images/${option}.png`});
+  await page.screenshot({path: `testing/images/_${option}.png`});
   assert.strictEqual(242, count);
 
   await browser.close();
